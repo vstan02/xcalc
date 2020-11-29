@@ -22,7 +22,7 @@
 
 #include "app/token.h"
 
-int main() {
+int main(int argc, char** argv) {
     Token* token = Token_create(NUMBER, 5);
     printf("%f \n", token->get_payload(token));
     Token_destroy(token);

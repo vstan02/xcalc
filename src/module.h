@@ -25,6 +25,10 @@
 
 #define MODULE_PRIVATE(module, instance) instance->module##_private
 
+#define MODULE_ENUM(module, name) \
+    typedef enum t_##module##name module##name; \
+    enum t_##module##name
+
 #define MODULE_CLASS(module, data) \
     typedef struct t_##module module; \
     struct t_##module { \
@@ -46,7 +50,7 @@
     MODULE_DESTRUCTOR(module)
 
 #define MODULE_INIT_PRIVATE(module, object) \
-    MODULE_PRIVATE(Expression, self) = (PRIVATE_DATA*) malloc(sizeof(PRIVATE_DATA))
+    MODULE_PRIVATE(module, self) = (PRIVATE_DATA*) malloc(sizeof(PRIVATE_DATA))
 
 #define MODULE_INIT_PARAMS(...) (self, ##__VA_ARGS__)
 

@@ -48,7 +48,8 @@ MODULE_SET_CONSTRUCTOR(Expression, MODULE_INIT_PARAMS(string), char* string) {
 
     set_size(self, strlen(string));
     set_target(self, string);
-    self->size = get_size;
+
+    self->get_size = get_size;
 }
 
 MODULE_SET_DESTRUCTOR(Expression) {

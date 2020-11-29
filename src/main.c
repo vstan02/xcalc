@@ -20,11 +20,11 @@
 
 #include <stdio.h>
 
-#include "app/expression.h"
+#include "app/token.h"
 
 int main() {
-    Expression* expression = Expression_create("test");
-    printf("%zu \n", expression->size(expression));
-    Expression_destroy(expression);
+    Token* token = Token_create(NUMBER, 5);
+    printf("%f \n", token->get_payload(token));
+    Token_destroy(token);
     return 0;
 }

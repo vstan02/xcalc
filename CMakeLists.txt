@@ -6,11 +6,13 @@ set(CMAKE_C_STANDARD 99)
 set(
     XCALC_HEADERS
     src/module.h
+    src/app/token.h
     src/app/expression.h
 )
 
 set(
     XCALC_SOURCES
+    src/app/token.c
     src/app/expression.c
 )
 

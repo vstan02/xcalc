@@ -18,15 +18,35 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef X_CALC_EXPRESSION_H
-#define X_CALC_EXPRESSION_H
+#include <malloc.h>
 
-#include <stddef.h>
+#include "token.h"
 
-#include "module.h"
+#define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(Token, object))
 
-MODULE(Expression, {
-    size_t (*get_size)(Expression* self);
-}, char* string)
+PRIVATE_DATA {
+    TokenType type;
+    double payload;
+};
 
-#endif // X_CALC_EXPRESSION_H
+static TokenType get_type(Token* self) {
+    return PRIVATE(self)->type;
+}
+
+static double get_payload(Token* self) {
+    return PRIVATE(self)->payload;
+}
+
+MODULE_SET_CONSTRUCTOR(Token, MODULE_INIT_PARAMS(type, payload), TokenType type, double payload) {
+    MODULE_INIT_PRIVATE(Token, self);
+
+    PRIVATE(self)->type = type;
+    PRIVATE(self)->payload = payload;
+
+    self->get_type = get_type;
+    self->get_payload = get_payload;
+}
+
+MODULE_SET_DESTRUCTOR(Token) {
+    free(PRIVATE(self));
+}

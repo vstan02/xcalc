@@ -18,15 +18,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef X_CALC_EXPRESSION_H
-#define X_CALC_EXPRESSION_H
-
-#include <stddef.h>
+#ifndef XCALC_TOKEN_H
+#define XCALC_TOKEN_H
 
 #include "module.h"
 
-MODULE(Expression, {
-    size_t (*get_size)(Expression* self);
-}, char* string)
+MODULE_ENUM(Token, Type) {
+    NUMBER,
+    PLUS,
+    MINUS,
+    MULTIPLICATION,
+    DIVISION,
+    LPAREN,
+    RPAREN,
+    END
+};
 
-#endif // X_CALC_EXPRESSION_H
+MODULE(Token, {
+    TokenType (*get_type)(Token* self);
+    double (*get_payload)(Token* self);
+}, TokenType type, double payload)
+
+#endif // XCALC_TOKEN_H

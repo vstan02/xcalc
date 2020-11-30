@@ -18,15 +18,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
+#ifndef XCALC_ERROR_H
+#define XCALC_ERROR_H
 
-#include "app/interpreter.h"
+void throw_error(char* message);
 
-int main(int argc, char** argv) {
-    Interpreter* interpreter = Interpreter_create(
-    Expression_create("2 + 3")
-    );
-    printf("%f\n", interpreter->process(interpreter));
-    Interpreter_destroy(interpreter);
-    return 0;
-}
+#endif // XCALC_ERROR_H

@@ -20,5 +20,6 @@ static void test_expression_main(void) {
 static void test_expression_getters(void) {
     Expression* expression = Expression_create("test");
     g_assert_cmpint(expression->get_size(expression), ==, 4);
+    g_assert_cmpint(expression->get_char(expression, 1), ==, 'e');
     Expression_destroy(expression);
 }

@@ -26,6 +26,7 @@
 #include "core/module.h"
 
 MODULE(Expression, {
+    char (*get_char)(Expression* self, size_t index);
     size_t (*get_size)(Expression* self);
 }, char* string)
 

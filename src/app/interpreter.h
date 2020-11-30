@@ -18,15 +18,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
+#ifndef X_CALC_INTERPRETER_H
+#define X_CALC_INTERPRETER_H
 
-#include "app/interpreter.h"
+#include "core/module.h"
+#include "lexer.h"
+#include "expression.h"
 
-int main(int argc, char** argv) {
-    Interpreter* interpreter = Interpreter_create(
-    Expression_create("2 + 3")
-    );
-    printf("%f\n", interpreter->process(interpreter));
-    Interpreter_destroy(interpreter);
-    return 0;
-}
+MODULE(Interpreter, {
+    double (*process)(Interpreter* self);
+}, Expression* expression)
+
+#endif // X_CALC_INTERPRETER_H

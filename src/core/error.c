@@ -19,14 +19,11 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
-#include "app/interpreter.h"
+#include "error.h"
 
-int main(int argc, char** argv) {
-    Interpreter* interpreter = Interpreter_create(
-    Expression_create("2 + 3")
-    );
-    printf("%f\n", interpreter->process(interpreter));
-    Interpreter_destroy(interpreter);
-    return 0;
+void throw_error(char* message) {
+    fprintf(stderr, "%s!\n", message);
+    exit(EXIT_FAILURE);
 }

@@ -7,13 +7,19 @@ set(
     XCALC_HEADERS
     src/core/test.h
     src/core/module.h
+    src/core/error.h
     src/app/token.h
+    src/app/lexer.h
+    src/app/interpreter.h
     src/app/expression.h
 )
 
 set(
     XCALC_SOURCES
+    src/core/error.c
     src/app/token.c
+    src/app/lexer.c
+    src/app/interpreter.c
     src/app/expression.c
 )
 
@@ -21,6 +27,8 @@ set(
     XCALC_TESTS
     src/app/token_test.c
     src/app/expression_test.c
+    src/app/lexer_test.c
+    src/app/interpreter_test.c
 )
 
 include_directories(src)

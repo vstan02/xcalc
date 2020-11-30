@@ -20,6 +20,7 @@
 
 #include <malloc.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "expression.h"
 
@@ -38,9 +39,21 @@ static size_t get_size(Expression* self) {
     return PRIVATE(self)->length;
 }
 
+static bool is_valid_index(Expression* self, size_t index) {
+    return index >= 0 && index < get_size(self);
+}
+
 static void set_target(Expression* self, char* target) {
     PRIVATE(self)->target = malloc(get_size(self));
     strcpy(PRIVATE(self)->target, target);
+}
+
+static char get_char(Expression* self, size_t index) {
+    if (is_valid_index(self, index)) {
+        return PRIVATE(self)->target[index];
+    }
+
+    return '\0';
 }
 
 MODULE_SET_CONSTRUCTOR(Expression, MODULE_INIT_PARAMS(string), char* string) {
@@ -49,6 +62,7 @@ MODULE_SET_CONSTRUCTOR(Expression, MODULE_INIT_PARAMS(string), char* string) {
     set_size(self, strlen(string));
     set_target(self, string);
 
+    self->get_char = get_char;
     self->get_size = get_size;
 }
 

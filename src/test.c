@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 
-#include "test.h"
+#include "core/test.h"
 
 int main(int argc, char** argv) {
     g_test_init(&argc, &argv, NULL);

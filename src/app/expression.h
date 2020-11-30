@@ -23,7 +23,7 @@
 
 #include <stddef.h>
 
-#include "module.h"
+#include "core/module.h"
 
 MODULE(Expression, {
     size_t (*get_size)(Expression* self);

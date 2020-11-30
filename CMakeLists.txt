@@ -5,8 +5,8 @@ set(CMAKE_C_STANDARD 99)
 
 set(
     XCALC_HEADERS
-    src/test.h
-    src/module.h
+    src/core/test.h
+    src/core/module.h
     src/app/token.h
     src/app/expression.h
 )

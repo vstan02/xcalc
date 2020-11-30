@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 
-#include "test.h"
+#include "core/test.h"
 #include "expression.h"
 
 static void test_expression_main(void);

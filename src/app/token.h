@@ -21,7 +21,7 @@
 #ifndef XCALC_TOKEN_H
 #define XCALC_TOKEN_H
 
-#include "module.h"
+#include "core/module.h"
 
 MODULE_ENUM(Token, Type) {
     NUMBER,

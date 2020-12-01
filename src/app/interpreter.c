@@ -61,7 +61,7 @@ static bool is_multiplication_operator(Interpreter* self) {
 static void eat_token(Interpreter* self, TokenType type) {
     Token *token = get_token(self);
     if (token->get_type(token) == type) {
-        free(token);
+        Token_destroy(token);
         PRIVATE(self)->token = get_next_token(self);
     } else {
         throw_error("Interpreter::eat_token - Invalid syntax");

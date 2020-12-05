@@ -12,6 +12,7 @@ set(
     src/app/lexer.h
     src/app/interpreter.h
     src/app/expression.h
+    src/app/calculator.h
 )
 
 set(
@@ -21,6 +22,7 @@ set(
     src/app/lexer.c
     src/app/interpreter.c
     src/app/expression.c
+    src/app/calculator.c
 )
 
 set(
@@ -29,6 +31,7 @@ set(
     src/app/expression_test.c
     src/app/lexer_test.c
     src/app/interpreter_test.c
+    src/app/calculator_test.c
 )
 
 include_directories(src)

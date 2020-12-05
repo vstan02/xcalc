@@ -18,13 +18,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef X_CALC_CALCULATOR_H
-#define X_CALC_CALCULATOR_H
+#include <malloc.h>
+#include <gtk/gtk.h>
 
-#include "core/module.h"
+#include "gui.h"
 
-MODULE(Calculator, {
-    double (*calculate)(Calculator* self, char* expression);
-})
+static void run(Gui* gui, int argc, char** argv) {
+    gtk_init(&argc, &argv);
+    GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_widget_show(window);
+    gtk_main();
+}
 
-#endif // X_CALC_CALCULATOR_H
+MODULE_SET_CONSTRUCTOR(Gui, MODULE_INIT_PARAMS(app), App* app) {
+    self->run = run;
+}
+
+MODULE_SET_DESTRUCTOR(Gui) {}

@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.17)
 project(xCalc C)
 
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_FLAGS -fms-extensions)
 
 set(
     XCALC_HEADERS
@@ -13,6 +14,8 @@ set(
     src/app/interpreter.h
     src/app/expression.h
     src/app/calculator.h
+    src/gui/app.h
+    src/gui/gui.h
 )
 
 set(
@@ -23,6 +26,7 @@ set(
     src/app/interpreter.c
     src/app/expression.c
     src/app/calculator.c
+    src/gui/gui.c
 )
 
 set(
@@ -48,4 +52,5 @@ link_directories(${GTK3_LIBRARY_DIRS})
 
 add_definitions(${GTK3_CFLAGS_OTHER})
 
+target_link_libraries(x_calc ${GTK3_LIBRARIES})
 target_link_libraries(test ${GTK3_LIBRARIES})

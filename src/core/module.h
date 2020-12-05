@@ -29,6 +29,9 @@
     typedef enum t_##module##name module##name; \
     enum t_##module##name
 
+#define MODULE_PARENT(parent) \
+    struct t_##parent;
+
 #define MODULE_CLASS(module, data) \
     typedef struct t_##module module; \
     struct t_##module { \

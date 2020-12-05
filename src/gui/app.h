@@ -18,13 +18,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef X_CALC_CALCULATOR_H
-#define X_CALC_CALCULATOR_H
+#ifndef XCALC_APP_H
+#define XCALC_APP_H
 
 #include "core/module.h"
 
-MODULE(Calculator, {
-    double (*calculate)(Calculator* self, char* expression);
+MODULE_CLASS(App, {
+    double (*calculate)(App* self, char* expression);
 })
 
-#endif // X_CALC_CALCULATOR_H
+#endif // XCALC_APP_H

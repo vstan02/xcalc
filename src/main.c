@@ -18,15 +18,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-
-#include "app/interpreter.h"
+#include "app/calculator.h"
+#include "gui/gui.h"
 
 int main(int argc, char** argv) {
-    Interpreter* interpreter = Interpreter_create(
-    Expression_create("2 + 3")
-    );
-    printf("%f\n", interpreter->process(interpreter));
-    Interpreter_destroy(interpreter);
+    Calculator* calculator = Calculator_create();
+    Gui* ui = Gui_create((App*) calculator);
+    ui->run(ui, argc, argv);
+    Gui_destroy(ui);
+    Calculator_destroy(calculator);
     return 0;
 }

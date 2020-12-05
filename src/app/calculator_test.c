@@ -20,5 +20,7 @@ static void test_calculator_main(void) {
 static void test_calculator_calculate(void) {
     Calculator* calculator = Calculator_create();
     g_assert_cmpfloat(calculator->calculate(calculator, "4"), ==, 4);
+    g_assert_cmpfloat(calculator->calculate(calculator, "4 + 2 * 3"), ==, 10);
+    g_assert_cmpfloat(calculator->calculate(calculator, "(4 + 2) * 3"), ==, 18);
     Calculator_destroy(calculator);
 }

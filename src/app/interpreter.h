@@ -27,6 +27,6 @@
 
 MODULE(Interpreter, {
     double (*process)(Interpreter* self);
-}, Expression* expression)
+}, char* expression)
 
 #endif // X_CALC_INTERPRETER_H

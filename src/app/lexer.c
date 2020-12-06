@@ -142,17 +142,17 @@ static Token* get_next_token(Lexer* self) {
     return Token_create(END, 0);
 }
 
-MODULE_SET_CONSTRUCTOR(Lexer, MODULE_INIT_PARAMS(expression), Expression* expression) {
+MODULE_SET_CONSTRUCTOR(Lexer, MODULE_INIT_PARAMS(expression), char* expression) {
     MODULE_INIT_PRIVATE(Lexer, self);
 
     PRIVATE(self)->position = 0;
-    PRIVATE(self)->expression = expression;
-    PRIVATE(self)->current = expression->get_char(expression, 0);
+    PRIVATE(self)->expression = Expression_create(expression);
+    PRIVATE(self)->current = expression[0];
 
     self->get_next_token = get_next_token;
 }
 
 MODULE_SET_DESTRUCTOR(Lexer) {
-    free(PRIVATE(self)->expression);
+    Expression_destroy(PRIVATE(self)->expression);
     free(PRIVATE(self));
 }

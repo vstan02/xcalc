@@ -12,13 +12,13 @@ void test_interpreter(void) {
 }
 
 static void test_interpreter_main(void) {
-    Interpreter* interpreter = Interpreter_create(Expression_create("4 + 7"));
+    Interpreter* interpreter = Interpreter_create("4 + 7");
     g_assert_nonnull(interpreter);
     Interpreter_destroy(interpreter);
 }
 
 static void verify_expression_processing(char* exp, double result) {
-    Interpreter* interpreter = Interpreter_create(Expression_create(exp));
+    Interpreter* interpreter = Interpreter_create(exp);
     g_assert_cmpfloat(interpreter->process(interpreter), ==, result);
     Interpreter_destroy(interpreter);
 }

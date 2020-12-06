@@ -12,7 +12,7 @@ void test_lexer(void) {
 }
 
 static void test_lexer_main(void) {
-    Lexer* lexer = Lexer_create(Expression_create("test"));
+    Lexer* lexer = Lexer_create("test");
     g_assert_nonnull(lexer);
     Lexer_destroy(lexer);
 }
@@ -23,7 +23,7 @@ static void verify_next_token_type(Lexer* lexer, TokenType type) {
 }
 
 static void test_lexer_get_next_token(void) {
-    Lexer* lexer = Lexer_create(Expression_create("3 * (+2)"));
+    Lexer* lexer = Lexer_create("3 * (+2)");
     verify_next_token_type(lexer, NUMBER);
     verify_next_token_type(lexer, MULTIPLICATION);
     verify_next_token_type(lexer, LPAREN);

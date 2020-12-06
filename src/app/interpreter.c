@@ -148,7 +148,7 @@ static double process_multiplication(Interpreter* self, double initial) {
     }
 }
 
-MODULE_SET_CONSTRUCTOR(Interpreter, MODULE_INIT_PARAMS(expression), Expression* expression) {
+MODULE_SET_CONSTRUCTOR(Interpreter, MODULE_INIT_PARAMS(expression), char* expression) {
     MODULE_INIT_PRIVATE(Interpreter, self);
 
     PRIVATE(self)->lexer = Lexer_create(expression);
@@ -158,6 +158,6 @@ MODULE_SET_CONSTRUCTOR(Interpreter, MODULE_INIT_PARAMS(expression), Expression* 
 }
 
 MODULE_SET_DESTRUCTOR(Interpreter) {
-    free(PRIVATE(self)->lexer);
+    Lexer_destroy(PRIVATE(self)->lexer);
     free(PRIVATE(self));
 }

@@ -23,8 +23,7 @@
 #include "calculator.h"
 #include "interpreter.h"
 
-static double calculate(Calculator* self, char* exp) {
-    Expression* expression = Expression_create(exp);
+static double calculate(Calculator* self, char* expression) {
     Interpreter* interpreter = Interpreter_create(expression);
     double result = interpreter->process(interpreter);
     Interpreter_destroy(interpreter);

@@ -27,6 +27,6 @@
 
 MODULE(Lexer, {
     Token* (*get_next_token)(Lexer* self);
-}, Expression* expression)
+}, char* expression)
 
 #endif // X_CALC_LEXER_H

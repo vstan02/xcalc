@@ -23,15 +23,12 @@
 #include "calculator.h"
 #include "interpreter.h"
 
-static double calculate(Calculator* self, char* expression) {
-    Interpreter* interpreter = Interpreter_create(expression);
-    double result = interpreter->process(interpreter);
-    Interpreter_destroy(interpreter);
+double calculator_calculate(Calculator* self, char* expression) {
+    Interpreter* interpreter = interpreter_create(expression);
+    double result = interpreter_process(interpreter);
+    interpreter_destroy(interpreter);
     return result;
 }
 
-MODULE_SET_CONSTRUCTOR(Calculator, MODULE_INIT_PARAMS()) {
-    self->calculate = calculate;
-}
-
-MODULE_SET_DESTRUCTOR(Calculator) {}
+MODULE_SET_CONSTRUCTOR(calculator, Calculator, MODULE_INIT_PARAMS()) {}
+MODULE_SET_DESTRUCTOR(calculator, Calculator) {}

@@ -12,14 +12,14 @@ void test_expression(void) {
 }
 
 static void test_expression_main(void) {
-    Expression* expression = Expression_create("test");
+    Expression* expression = expression_create("test");
     g_assert_nonnull(expression);
-    Expression_destroy(expression);
+    expression_destroy(expression);
 }
 
 static void test_expression_getters(void) {
-    Expression* expression = Expression_create("test");
-    g_assert_cmpint(expression->get_size(expression), ==, 4);
-    g_assert_cmpint(expression->get_char(expression, 1), ==, 'e');
-    Expression_destroy(expression);
+    Expression* expression = expression_create("test");
+    g_assert_cmpint(expression_get_size(expression), ==, 4);
+    g_assert_cmpint(expression_get_char(expression, 1), ==, 'e');
+    expression_destroy(expression);
 }

@@ -25,53 +25,48 @@
 
 #define MODULE_PRIVATE(module, instance) instance->module##_private
 
-#define MODULE_ENUM(module, name) \
-    typedef enum t_##module##name module##name; \
-    enum t_##module##name
+#define MODULE_ENUM(main, name) \
+    typedef enum t_##main##name main##name; \
+    enum t_##main##name
 
 #define MODULE_PARENT(parent) \
     struct t_##parent;
 
-#define MODULE_CLASS(module, data) \
-    typedef struct t_##module module; \
-    struct t_##module { \
+#define MODULE_CLASS(module, class, data) \
+    typedef struct t_##class class; \
+    struct t_##class { \
         struct data; \
         void* module##_private; \
     };
 
-#define MODULE_CONSTRUCTOR(module, ...) \
-    void module##_init(module* self, ##__VA_ARGS__); \
-    module* module##_create(__VA_ARGS__);
+#define MODULE_CONSTRUCTOR(module, class, args...) \
+    class* module##_create(args); \
+    void module##_init(class* self, ##args);
 
-#define MODULE_DESTRUCTOR(module) \
-    void module##_reset(module* self); \
-    void module##_destroy(module* self);
-
-#define MODULE(module, data, ...) \
-    MODULE_CLASS(module, data) \
-    MODULE_CONSTRUCTOR(module, ##__VA_ARGS__) \
-    MODULE_DESTRUCTOR(module)
+#define MODULE_DESTRUCTOR(module, class) \
+    void module##_reset(class* self); \
+    void module##_destroy(class* self);
 
 #define MODULE_INIT_PRIVATE(module, object) \
     MODULE_PRIVATE(module, self) = (PRIVATE_DATA*) malloc(sizeof(PRIVATE_DATA))
 
-#define MODULE_INIT_PARAMS(...) (self, ##__VA_ARGS__)
+#define MODULE_INIT_PARAMS(args...) (self, ##args)
 
-#define MODULE_SET_CONSTRUCTOR(module, init_params, ...) \
-    module* module##_create(__VA_ARGS__) { \
-        module* self = (module*) malloc(sizeof(module)); \
+#define MODULE_SET_CONSTRUCTOR(module, class, init_params, args...) \
+    class* module##_create(args) { \
+        class* self = (class*) malloc(sizeof(class)); \
         module##_init init_params; \
         return self; \
     } \
-    void module##_init(module* self, ##__VA_ARGS__)
+    void module##_init(class* self, ##args)
 
-#define MODULE_SET_DESTRUCTOR(module) \
-    void module##_destroy(module* self) { \
+#define MODULE_SET_DESTRUCTOR(module, class) \
+    void module##_destroy(class* self) { \
         if (self) { \
             module##_reset(self); \
             free(self); \
         } \
     } \
-    void module##_reset(module* self)
+    void module##_reset(class* self)
 
 #endif // X_CALC_MODULE_H

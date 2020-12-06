@@ -22,11 +22,12 @@
 #define X_CALC_INTERPRETER_H
 
 #include "core/module.h"
-#include "lexer.h"
-#include "expression.h"
 
-MODULE(Interpreter, {
-    double (*process)(Interpreter* self);
-}, char* expression)
+MODULE_CLASS(interpreter, Interpreter, {})
+
+MODULE_CONSTRUCTOR(interpreter, Interpreter, char* expression)
+MODULE_DESTRUCTOR(interpreter, Interpreter)
+
+double interpreter_process(Interpreter* self);
 
 #endif // X_CALC_INTERPRETER_H

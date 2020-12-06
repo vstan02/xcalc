@@ -23,10 +23,12 @@
 
 #include "core/module.h"
 #include "token.h"
-#include "expression.h"
 
-MODULE(Lexer, {
-    Token* (*get_next_token)(Lexer* self);
-}, char* expression)
+MODULE_CLASS(lexer, Lexer, {})
+
+MODULE_CONSTRUCTOR(lexer, Lexer, char* expression)
+MODULE_DESTRUCTOR(lexer, Lexer)
+
+Token* lexer_get_next_token(Lexer* self);
 
 #endif // X_CALC_LEXER_H

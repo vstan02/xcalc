@@ -24,49 +24,48 @@
 
 #include "expression.h"
 
-#define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(Expression, object))
+#define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(expression, object))
 
 PRIVATE_DATA {
     size_t length;
     char* target;
 };
 
-static void set_size(Expression* self, size_t size) {
+static void expression_set_size(Expression* self, size_t size) {
     PRIVATE(self)->length = size;
 }
 
-static size_t get_size(Expression* self) {
+size_t expression_get_size(Expression* self) {
     return PRIVATE(self)->length;
 }
 
-static bool is_valid_index(Expression* self, size_t index) {
-    return index >= 0 && index < get_size(self);
+static bool expression_is_valid_index(Expression* self, size_t index) {
+    return index >= 0 && index < expression_get_size(self);
 }
 
-static void set_target(Expression* self, char* target) {
-    PRIVATE(self)->target = malloc(get_size(self));
+static void expression_set_target(Expression* self, char* target) {
+    PRIVATE(self)->target = malloc(expression_get_size(self));
     strcpy(PRIVATE(self)->target, target);
 }
 
-static char get_char(Expression* self, size_t index) {
-    if (is_valid_index(self, index)) {
+char expression_get_char(Expression* self, size_t index) {
+    if (expression_is_valid_index(self, index)) {
         return PRIVATE(self)->target[index];
     }
-
     return '\0';
 }
 
-MODULE_SET_CONSTRUCTOR(Expression, MODULE_INIT_PARAMS(string), char* string) {
-    MODULE_INIT_PRIVATE(Expression, self);
-
-    set_size(self, strlen(string));
-    set_target(self, string);
-
-    self->get_char = get_char;
-    self->get_size = get_size;
+MODULE_SET_CONSTRUCTOR(
+    expression, Expression,
+    MODULE_INIT_PARAMS(string),
+    char* string
+) {
+    MODULE_INIT_PRIVATE(expression, self);
+    expression_set_size(self, strlen(string));
+    expression_set_target(self, string);
 }
 
-MODULE_SET_DESTRUCTOR(Expression) {
+MODULE_SET_DESTRUCTOR(expression, Expression) {
     free(PRIVATE(self)->target);
     free(PRIVATE(self));
 }

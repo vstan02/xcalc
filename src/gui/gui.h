@@ -24,8 +24,11 @@
 #include "core/module.h"
 #include "app.h"
 
-MODULE(Gui, {
-    void (*run)(Gui* self, int argc, char** argv);
-}, App* app)
+MODULE_CLASS(gui, Gui, {})
+
+MODULE_CONSTRUCTOR(gui, Gui, App* app)
+MODULE_DESTRUCTOR(gui, Gui)
+
+void gui_run(Gui* self, int argc, char** argv);
 
 #endif // XCALC_GUI_H

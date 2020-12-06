@@ -22,142 +22,147 @@
 #include <stdbool.h>
 
 #include "core/error.h"
+#include "lexer.h"
 #include "interpreter.h"
 
-#define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(Interpreter, object))
+#define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(interpreter, object))
 
 PRIVATE_DATA {
     Lexer* lexer;
     Token* token;
 };
 
-static double process_unary(Interpreter*);
-static double process_paren(Interpreter*);
-static double process_expression(Interpreter*);
-static double process_addition(Interpreter*, double);
-static double process_multiplication(Interpreter*, double);
+static double interpreter_process_unary(Interpreter*);
+static double interpreter_process_paren(Interpreter*);
+static double interpreter_process_expression(Interpreter*);
+static double interpreter_process_addition(Interpreter*, double);
+static double interpreter_process_multiplication(Interpreter*, double);
 
-static Token* get_next_token(Interpreter* self) {
-    Lexer* lexer = PRIVATE(self)->lexer;
-    return lexer->get_next_token(lexer);
+static Token* interpreter_get_next_token(Interpreter* self) {
+    return lexer_get_next_token(PRIVATE(self)->lexer);
 }
 
-static Token* get_token(Interpreter* self) {
+static Token* interpreter_get_token(Interpreter* self) {
     return PRIVATE(self)->token;
 }
 
-static bool is_addition_operator(Interpreter* self) {
-    Token* token = get_token(self);
-    return token->get_type(token) == PLUS
-        || token->get_type(token) == MINUS;
+static bool interpreter_is_addition_operator(Interpreter* self) {
+    Token* token = interpreter_get_token(self);
+    return token_get_type(token) == PLUS
+        || token_get_type(token) == MINUS;
 }
 
-static bool is_multiplication_operator(Interpreter* self) {
-    Token* token = get_token(self);
-    return token->get_type(token) == MULTIPLICATION
-        || token->get_type(token) == DIVISION;
+static bool interpreter_is_multiplication_operator(Interpreter* self) {
+    Token* token = interpreter_get_token(self);
+    return token_get_type(token) == MULTIPLICATION
+        || token_get_type(token) == DIVISION;
 }
 
-static void eat_token(Interpreter* self, TokenType type) {
-    Token *token = get_token(self);
-    if (token->get_type(token) == type) {
-        Token_destroy(token);
-        PRIVATE(self)->token = get_next_token(self);
+static void interpreter_eat_token(Interpreter* self, TokenType type) {
+    Token *token = interpreter_get_token(self);
+    if (token_get_type(token) == type) {
+        token_destroy(token);
+        PRIVATE(self)->token = interpreter_get_next_token(self);
     } else {
         throw_error("Interpreter::eat_token - Invalid syntax");
     }
 }
 
-static double process_factor(Interpreter* self) {
-    if (is_addition_operator(self)) {
-        return process_unary(self);
+static double interpreter_process_factor(Interpreter* self) {
+    if (interpreter_is_addition_operator(self)) {
+        return interpreter_process_unary(self);
     }
 
-    Token* token = get_token(self);
-    if (token->get_type(token) == LPAREN) {
-        return process_paren(self);
+    Token* token = interpreter_get_token(self);
+    if (token_get_type(token) == LPAREN) {
+        return interpreter_process_paren(self);
     }
 
-    double result = token->get_payload(token);
-    eat_token(self, NUMBER);
+    double result = token_get_payload(token);
+    interpreter_eat_token(self, NUMBER);
     return result;
 }
 
-static double process_term(Interpreter* self) {
-    double result = process_factor(self);
-    while (is_multiplication_operator(self)) {
-        result = process_multiplication(self, result);
+static double interpreter_process_term(Interpreter* self) {
+    double result = interpreter_process_factor(self);
+    while (interpreter_is_multiplication_operator(self)) {
+        result = interpreter_process_multiplication(self, result);
     }
     return result;
 }
 
-static double process_unary(Interpreter* self) {
-    Token* token = get_token(self);
-    switch (token->get_type(token)) {
+static double interpreter_process_unary(Interpreter* self) {
+    Token* token = interpreter_get_token(self);
+    switch (token_get_type(token)) {
         case PLUS:
-            eat_token(self, PLUS);
-            return process_factor(self);
+            interpreter_eat_token(self, PLUS);
+            return interpreter_process_factor(self);
         case MINUS:
-            eat_token(self, MINUS);
-            return - process_factor(self);
+            interpreter_eat_token(self, MINUS);
+            return -interpreter_process_factor(self);
         default:
             throw_error("Interpreter::process_unary - Invalid syntax");
     }
 }
 
-static double process_paren(Interpreter* self) {
-    eat_token(self, LPAREN);
-    double result = process_expression(self);
-    eat_token(self, RPAREN);
+static double interpreter_process_paren(Interpreter* self) {
+    interpreter_eat_token(self, LPAREN);
+    double result = interpreter_process_expression(self);
+    interpreter_eat_token(self, RPAREN);
     return result;
 }
 
-static double process_expression(Interpreter* self) {
-    double result = process_term(self);
-    while (is_addition_operator(self)) {
-        result = process_addition(self, result);
+static double interpreter_process_expression(Interpreter* self) {
+    double result = interpreter_process_term(self);
+    while (interpreter_is_addition_operator(self)) {
+        result = interpreter_process_addition(self, result);
     }
     return result;
 }
 
-static double process_addition(Interpreter* self, double initial) {
-    Token* token = get_token(self);
-    switch (token->get_type(token)) {
+static double interpreter_process_addition(Interpreter* self, double initial) {
+    Token* token = interpreter_get_token(self);
+    switch (token_get_type(token)) {
         case PLUS:
-            eat_token(self, PLUS);
-            return initial + process_term(self);
+            interpreter_eat_token(self, PLUS);
+            return initial + interpreter_process_term(self);
         case MINUS:
-            eat_token(self, MINUS);
-            return initial - process_term(self);
+            interpreter_eat_token(self, MINUS);
+            return initial - interpreter_process_term(self);
         default:
             throw_error("Interpreter::process_addition - Invalid syntax");
     }
 }
 
-static double process_multiplication(Interpreter* self, double initial) {
-    Token* token = get_token(self);
-    switch (token->get_type(token)) {
+static double interpreter_process_multiplication(Interpreter* self, double initial) {
+    Token* token = interpreter_get_token(self);
+    switch (token_get_type(token)) {
         case MULTIPLICATION:
-            eat_token(self, MULTIPLICATION);
-            return initial * process_factor(self);
+            interpreter_eat_token(self, MULTIPLICATION);
+            return initial * interpreter_process_factor(self);
         case DIVISION:
-            eat_token(self, DIVISION);
-            return initial / process_factor(self);
+            interpreter_eat_token(self, DIVISION);
+            return initial / interpreter_process_factor(self);
         default:
             throw_error("Interpreter::process_multiplication - Invalid syntax");
     }
 }
 
-MODULE_SET_CONSTRUCTOR(Interpreter, MODULE_INIT_PARAMS(expression), char* expression) {
-    MODULE_INIT_PRIVATE(Interpreter, self);
-
-    PRIVATE(self)->lexer = Lexer_create(expression);
-    PRIVATE(self)->token = get_next_token(self);
-
-    self->process = process_expression;
+double interpreter_process(Interpreter* self) {
+    return interpreter_process_expression(self);
 }
 
-MODULE_SET_DESTRUCTOR(Interpreter) {
-    Lexer_destroy(PRIVATE(self)->lexer);
+MODULE_SET_CONSTRUCTOR(
+    interpreter, Interpreter,
+    MODULE_INIT_PARAMS(expression),
+    char* expression
+) {
+    MODULE_INIT_PRIVATE(interpreter, self);
+    PRIVATE(self)->lexer = lexer_create(expression);
+    PRIVATE(self)->token = interpreter_get_next_token(self);
+}
+
+MODULE_SET_DESTRUCTOR(interpreter, Interpreter) {
+    lexer_destroy(PRIVATE(self)->lexer);
     free(PRIVATE(self));
 }

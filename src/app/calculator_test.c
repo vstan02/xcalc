@@ -12,15 +12,15 @@ void test_calculator(void) {
 }
 
 static void test_calculator_main(void) {
-    Calculator* calculator = Calculator_create();
+    Calculator* calculator = calculator_create();
     g_assert_nonnull(calculator);
-    Calculator_destroy(calculator);
+    calculator_destroy(calculator);
 }
 
 static void test_calculator_calculate(void) {
-    Calculator* calculator = Calculator_create();
-    g_assert_cmpfloat(calculator->calculate(calculator, "4"), ==, 4);
-    g_assert_cmpfloat(calculator->calculate(calculator, "4 + 2 * 3"), ==, 10);
-    g_assert_cmpfloat(calculator->calculate(calculator, "(4 + 2) * 3"), ==, 18);
-    Calculator_destroy(calculator);
+    Calculator* calculator = calculator_create();
+    g_assert_cmpfloat(calculator_calculate(calculator, "4"), ==, 4);
+    g_assert_cmpfloat(calculator_calculate(calculator, "4 + 2 * 3"), ==, 10);
+    g_assert_cmpfloat(calculator_calculate(calculator, "(4 + 2) * 3"), ==, 18);
+    calculator_destroy(calculator);
 }

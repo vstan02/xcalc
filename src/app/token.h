@@ -34,9 +34,12 @@ MODULE_ENUM(Token, Type) {
     END
 };
 
-MODULE(Token, {
-    TokenType (*get_type)(Token* self);
-    double (*get_payload)(Token* self);
-}, TokenType type, double payload)
+MODULE_CLASS(token, Token, {})
+
+MODULE_CONSTRUCTOR(token, Token, TokenType type, double payload)
+MODULE_DESTRUCTOR(token, Token)
+
+TokenType token_get_type(Token* self);
+double token_get_payload(Token* self);
 
 #endif // XCALC_TOKEN_H

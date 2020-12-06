@@ -22,31 +22,31 @@
 
 #include "token.h"
 
-#define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(Token, object))
+#define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(token, object))
 
 PRIVATE_DATA {
     TokenType type;
     double payload;
 };
 
-static TokenType get_type(Token* self) {
+TokenType token_get_type(Token* self) {
     return PRIVATE(self)->type;
 }
 
-static double get_payload(Token* self) {
+double token_get_payload(Token* self) {
     return PRIVATE(self)->payload;
 }
 
-MODULE_SET_CONSTRUCTOR(Token, MODULE_INIT_PARAMS(type, payload), TokenType type, double payload) {
-    MODULE_INIT_PRIVATE(Token, self);
-
+MODULE_SET_CONSTRUCTOR(
+    token, Token,
+    MODULE_INIT_PARAMS(type, payload),
+    TokenType type, double payload
+) {
+    MODULE_INIT_PRIVATE(token, self);
     PRIVATE(self)->type = type;
     PRIVATE(self)->payload = payload;
-
-    self->get_type = get_type;
-    self->get_payload = get_payload;
 }
 
-MODULE_SET_DESTRUCTOR(Token) {
+MODULE_SET_DESTRUCTOR(token, Token) {
     free(PRIVATE(self));
 }

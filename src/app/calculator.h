@@ -23,8 +23,11 @@
 
 #include "core/module.h"
 
-MODULE(Calculator, {
-    double (*calculate)(Calculator* self, char* expression);
-})
+MODULE_CLASS(calculator, Calculator, {})
+
+MODULE_CONSTRUCTOR(calculator, Calculator)
+MODULE_DESTRUCTOR(calculator, Calculator)
+
+double calculator_calculate(Calculator* self, char* expression);
 
 #endif // X_CALC_CALCULATOR_H

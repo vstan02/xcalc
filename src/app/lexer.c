@@ -22,9 +22,10 @@
 #include <stdbool.h>
 
 #include "core/error.h"
+#include "expression.h"
 #include "lexer.h"
 
-#define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(Lexer, object))
+#define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(lexer, object))
 
 PRIVATE_DATA {
     char current;
@@ -32,127 +33,128 @@ PRIVATE_DATA {
     size_t position;
 };
 
-static char get_current(Lexer* self) {
+static char lexer_get_current(Lexer* self) {
     return PRIVATE(self)->current;
 }
 
-static Expression* get_expression(Lexer* self) {
+static Expression* lexer_get_expression(Lexer* self) {
     return PRIVATE(self)->expression;
 }
 
-static size_t get_position(Lexer* self) {
+static size_t lexer_get_position(Lexer* self) {
     return PRIVATE(self)->position;
 }
 
-static char get_next_char(Lexer* self) {
-    Expression* expression = get_expression(self);
-    return expression->get_char(expression, get_position(self));
+static char lexer_get_next_char(Lexer* self) {
+    Expression* expression = lexer_get_expression(self);
+    return expression_get_char(expression, lexer_get_position(self));
 }
 
-static bool is_parenthesis(Lexer* self) {
-    return get_current(self) == '(' || get_current(self) == ')';
+static bool lexer_is_parenthesis(Lexer* self) {
+    return lexer_get_current(self) == '(' || lexer_get_current(self) == ')';
 }
 
-static bool is_digit(Lexer* self) {
-    return get_current(self) > 47 && get_current(self) < 58;
+static bool lexer_is_digit(Lexer* self) {
+    return lexer_get_current(self) > 47 && lexer_get_current(self) < 58;
 }
 
-static bool is_ignorable_char(Lexer* self) {
-    return get_current(self) == ' ';
+static bool lexer_is_ignorable_char(Lexer* self) {
+    return lexer_get_current(self) == ' ';
 }
 
-static bool is_valid_position(Lexer* self) {
-    Expression* expression = get_expression(self);
-    return get_position(self) < expression->get_size(expression);
+static bool lexer_is_valid_position(Lexer* self) {
+    Expression* expression = lexer_get_expression(self);
+    return lexer_get_position(self) < expression_get_size(expression);
 }
 
-static void advance(Lexer* self) {
+static void lexer_advance(Lexer* self) {
     ++PRIVATE(self)->position;
-    PRIVATE(self)->current = get_next_char(self);
+    PRIVATE(self)->current = lexer_get_next_char(self);
 }
 
-static void skip_ignorable_char(Lexer* self) {
-    while (is_valid_position(self) && is_ignorable_char(self)) {
-        advance(self);
+static void lexer_skip_ignorable_char(Lexer* self) {
+    while (lexer_is_valid_position(self) && lexer_is_ignorable_char(self)) {
+        lexer_advance(self);
     }
 }
 
-static Token* get_next_number_token(Lexer* self) {
+static Token* lexer_get_next_number_token(Lexer* self) {
     double result = 0;
-    while (is_valid_position(self) && is_digit(self)) {
+    while (lexer_is_valid_position(self) && lexer_is_digit(self)) {
         result *= 10;
-        result += get_current(self) - '0';
-        advance(self);
+        result += lexer_get_current(self) - '0';
+        lexer_advance(self);
     }
-    return Token_create(NUMBER, result);
+    return token_create(NUMBER, result);
 }
 
-static Token* get_next_paren_token(Lexer* self) {
-    switch (get_current(self)) {
+static Token* lexer_get_next_paren_token(Lexer* self) {
+    switch (lexer_get_current(self)) {
         case '(':
-            advance(self);
-            return Token_create(LPAREN, 0);
+            lexer_advance(self);
+            return token_create(LPAREN, 0);
         case ')':
-            advance(self);
-            return Token_create(RPAREN, 0);
+            lexer_advance(self);
+            return token_create(RPAREN, 0);
         default:
             throw_error("Lexer::get_next_paren_token - Invalid parenthesis");
     }
 }
 
-static Token* get_next_operator_token(Lexer* self) {
-    switch (get_current(self)) {
+static Token* lexer_get_next_operator_token(Lexer* self) {
+    switch (lexer_get_current(self)) {
         case '+':
-            advance(self);
-            return Token_create(PLUS, 0);
+            lexer_advance(self);
+            return token_create(PLUS, 0);
         case '-':
-            advance(self);
-            return Token_create(MINUS, 0);
+            lexer_advance(self);
+            return token_create(MINUS, 0);
         case '*':
-            advance(self);
-            return Token_create(MULTIPLICATION, 0);
+            lexer_advance(self);
+            return token_create(MULTIPLICATION, 0);
         case '/':
-            advance(self);
-            return Token_create(DIVISION, 0);
+            lexer_advance(self);
+            return token_create(DIVISION, 0);
         default:
             throw_error("Lexer::get_next_operator_token - Invalid operator");
     }
 }
 
-static Token* get_next_lang_token(Lexer* self) {
-    if (is_digit(self)) {
-        return get_next_number_token(self);
+static Token* lexer_get_next_lang_token(Lexer* self) {
+    if (lexer_is_digit(self)) {
+        return lexer_get_next_number_token(self);
     }
 
-    if (is_parenthesis(self)) {
-        return get_next_paren_token(self);
+    if (lexer_is_parenthesis(self)) {
+        return lexer_get_next_paren_token(self);
     }
 
-    return get_next_operator_token(self);
+    return lexer_get_next_operator_token(self);
 }
 
-static Token* get_next_token(Lexer* self) {
-    while (is_valid_position(self)) {
-        if (is_ignorable_char(self)) {
-            skip_ignorable_char(self);
+Token* lexer_get_next_token(Lexer* self) {
+    while (lexer_is_valid_position(self)) {
+        if (lexer_is_ignorable_char(self)) {
+            lexer_skip_ignorable_char(self);
             continue;
         }
-        return get_next_lang_token(self);
+        return lexer_get_next_lang_token(self);
     }
-    return Token_create(END, 0);
+    return token_create(END, 0);
 }
 
-MODULE_SET_CONSTRUCTOR(Lexer, MODULE_INIT_PARAMS(expression), char* expression) {
-    MODULE_INIT_PRIVATE(Lexer, self);
-
+MODULE_SET_CONSTRUCTOR(
+    lexer, Lexer,
+    MODULE_INIT_PARAMS(expression),
+    char* expression
+) {
+    MODULE_INIT_PRIVATE(lexer, self);
     PRIVATE(self)->position = 0;
-    PRIVATE(self)->expression = Expression_create(expression);
+    PRIVATE(self)->expression = expression_create(expression);
     PRIVATE(self)->current = expression[0];
-
-    self->get_next_token = get_next_token;
 }
 
-MODULE_SET_DESTRUCTOR(Lexer) {
-    Expression_destroy(PRIVATE(self)->expression);
+MODULE_SET_DESTRUCTOR(lexer, Lexer) {
+    expression_destroy(PRIVATE(self)->expression);
     free(PRIVATE(self));
 }

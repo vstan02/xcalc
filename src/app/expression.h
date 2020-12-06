@@ -25,9 +25,12 @@
 
 #include "core/module.h"
 
-MODULE(Expression, {
-    char (*get_char)(Expression* self, size_t index);
-    size_t (*get_size)(Expression* self);
-}, char* string)
+MODULE_CLASS(expression, Expression, {})
+
+MODULE_CONSTRUCTOR(expression, Expression, char* string)
+MODULE_DESTRUCTOR(expression, Expression)
+
+char expression_get_char(Expression* self, size_t index);
+size_t expression_get_size(Expression* self);
 
 #endif // X_CALC_EXPRESSION_H

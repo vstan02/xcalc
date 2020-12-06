@@ -21,11 +21,15 @@
 #include "app/calculator.h"
 #include "gui/gui.h"
 
+double app_calculate(App* app, char* expression) {
+    calculator_calculate((Calculator*) app, expression);
+}
+
 int main(int argc, char** argv) {
-    Calculator* calculator = Calculator_create();
-    Gui* ui = Gui_create((App*) calculator);
-    ui->run(ui, argc, argv);
-    Gui_destroy(ui);
-    Calculator_destroy(calculator);
+    Calculator* calculator = calculator_create();
+    Gui* ui = gui_create((App*) calculator);
+    gui_run(ui, argc, argv);
+    gui_destroy(ui);
+    calculator_destroy(calculator);
     return 0;
 }

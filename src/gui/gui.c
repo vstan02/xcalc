@@ -22,7 +22,13 @@
 
 #include "gui.h"
 
-static void run(Gui* gui, int argc, char** argv) {
+#define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(gui, object))
+
+PRIVATE_DATA {
+    App* app;
+};
+
+void gui_run(Gui* self, int argc, char** argv) {
     gtk_init(&argc, &argv);
     GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
@@ -32,8 +38,11 @@ static void run(Gui* gui, int argc, char** argv) {
     gtk_main();
 }
 
-MODULE_SET_CONSTRUCTOR(Gui, MODULE_INIT_PARAMS(app), App* app) {
-    self->run = run;
+MODULE_SET_CONSTRUCTOR(gui, Gui, MODULE_INIT_PARAMS(app), App* app) {
+    MODULE_INIT_PRIVATE(gui, self);
+    PRIVATE(self)->app = app;
 }
 
-MODULE_SET_DESTRUCTOR(Gui) {}
+MODULE_SET_DESTRUCTOR(gui, Gui) {
+    free(PRIVATE(self));
+}

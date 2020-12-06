@@ -23,8 +23,8 @@
 
 #include "core/module.h"
 
-MODULE_CLASS(App, {
-    double (*calculate)(App* self, char* expression);
-})
+MODULE_CLASS(app, App, {})
+
+double app_calculate(App* self, char* expression);
 
 #endif // XCALC_APP_H

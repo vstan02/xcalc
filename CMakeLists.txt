@@ -7,6 +7,8 @@ set(CMAKE_C_FLAGS -fms-extensions)
 set(
     XCALC_HEADERS
     src/core/test.h
+    src/app/app_tests.h
+    src/gui/gui_tests.h
     src/core/module.h
     src/core/error.h
     src/app/token.h
@@ -16,6 +18,8 @@ set(
     src/app/calculator.h
     src/gui/app.h
     src/gui/gui.h
+    src/gui/window.h
+    src/gui/size.h
 )
 
 set(
@@ -27,15 +31,21 @@ set(
     src/app/expression.c
     src/app/calculator.c
     src/gui/gui.c
+    src/gui/window.c
+    src/gui/size.c
 )
 
 set(
     XCALC_TESTS
+    src/app/app_tests.c
+    src/gui/gui_tests.c
     src/app/token_test.c
     src/app/expression_test.c
     src/app/lexer_test.c
     src/app/interpreter_test.c
     src/app/calculator_test.c
+    src/gui/size_test.c
+    src/gui/window_test.c
 )
 
 include_directories(src)

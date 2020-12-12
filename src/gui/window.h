@@ -18,35 +18,19 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
+#ifndef XCALC_WINDOW_H
+#define XCALC_WINDOW_H
 
-#include "gui.h"
-#include "window.h"
+#include "core/module.h"
+#include "size.h"
 
-#define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(gui, object))
+MODULE_CLASS(window, Window, {})
 
-PRIVATE_DATA {
-    App* app;
-    Window* window;
-};
+MODULE_CONSTRUCTOR(window, Window, char* title, Size* size)
+MODULE_DESTRUCTOR(window, Window)
 
-static Window* gui_window_create(void) {
-    Window* window = window_create("xCalc", size_create(400, 500));
-    window_on_close(window, gtk_main_quit);
-    return window;
-}
+void window_run(Window* self, int argc, char** argv);
 
-void gui_run(Gui* self, int argc, char** argv) {
-    window_run(PRIVATE(self)->window, argc, argv);
-}
+void window_on_close(Window* self, void(*on_close)(void));
 
-MODULE_SET_CONSTRUCTOR(gui, Gui, MODULE_INIT_PARAMS(app), App* app) {
-    MODULE_INIT_PRIVATE(gui, self);
-    PRIVATE(self)->app = app;
-    PRIVATE(self)->window = gui_window_create();
-}
-
-MODULE_SET_DESTRUCTOR(gui, Gui) {
-    window_destroy(PRIVATE(self)->window);
-    free(PRIVATE(self));
-}
+#endif // XCALC_WINDOW_H

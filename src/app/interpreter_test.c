@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 
-#include "core/test.h"
+#include "app_tests.h"
 #include "interpreter.h"
 
 static void test_interpreter_main(void);

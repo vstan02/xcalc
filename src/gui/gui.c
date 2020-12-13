@@ -22,6 +22,11 @@
 
 #include "gui.h"
 #include "window.h"
+#include "comps/root_comp.h"
+
+#define WIN_TITLE "xCalc"
+#define WIN_WIDTH 320
+#define WIN_HEIGHT 400
 
 #define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(gui, object))
 
@@ -31,13 +36,16 @@ PRIVATE_DATA {
 };
 
 static Window* gui_window_create(void) {
-    Window* window = window_create("xCalc", size_create(400, 500));
+    Window* window = window_create(WIN_TITLE, size_create(WIN_WIDTH, WIN_HEIGHT));
     window_on_close(window, gtk_main_quit);
     return window;
 }
 
 void gui_run(Gui* self, int argc, char** argv) {
-    window_run(PRIVATE(self)->window, argc, argv);
+    gtk_init(&argc, &argv);
+    window_set_content(PRIVATE(self)->window, root_comp_create());
+    window_run(PRIVATE(self)->window);
+    gtk_main();
 }
 
 MODULE_SET_CONSTRUCTOR(gui, Gui, MODULE_INIT_PARAMS(app), App* app) {

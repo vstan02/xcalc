@@ -20,6 +20,10 @@ set(
     src/gui/gui.h
     src/gui/window.h
     src/gui/size.h
+    src/gui/comps/root_comp.h
+    src/gui/comps/button_comp.h
+    src/gui/comps/button_group_comp.h
+    src/gui/comps/input_comp.h
 )
 
 set(
@@ -33,6 +37,10 @@ set(
     src/gui/gui.c
     src/gui/window.c
     src/gui/size.c
+    src/gui/comps/root_comp.c
+    src/gui/comps/button_comp.c
+    src/gui/comps/button_group_comp.c
+    src/gui/comps/input_comp.c
 )
 
 set(

@@ -18,20 +18,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef XCALC_WINDOW_H
-#define XCALC_WINDOW_H
+#include "button_comp.h"
 
-#include "core/module.h"
-#include "size.h"
-
-MODULE_CLASS(window, Window, {})
-
-MODULE_CONSTRUCTOR(window, Window, char* title, Size* size)
-MODULE_DESTRUCTOR(window, Window)
-
-void window_run(Window* self);
-void window_set_content(Window* self, GtkWidget* widget);
-
-void window_on_close(Window* self, void(*on_close)(void));
-
-#endif // XCALC_WINDOW_H
+GtkWidget* button_comp_create(char* label) {
+    return gtk_button_new_with_label(label);
+}

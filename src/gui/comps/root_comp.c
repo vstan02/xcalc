@@ -18,20 +18,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef XCALC_WINDOW_H
-#define XCALC_WINDOW_H
+#include "root_comp.h"
 
-#include "core/module.h"
-#include "size.h"
+#include "input_comp.h"
+#include "button_group_comp.h"
 
-MODULE_CLASS(window, Window, {})
-
-MODULE_CONSTRUCTOR(window, Window, char* title, Size* size)
-MODULE_DESTRUCTOR(window, Window)
-
-void window_run(Window* self);
-void window_set_content(Window* self, GtkWidget* widget);
-
-void window_on_close(Window* self, void(*on_close)(void));
-
-#endif // XCALC_WINDOW_H
+GtkWidget* root_comp_create(void) {
+    GtkWidget* root = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_box_pack_start(GTK_BOX(root), input_comp_create(), TRUE, TRUE, 10);
+    gtk_box_pack_start(GTK_BOX(root), button_group_comp_create(), TRUE, TRUE, 10);
+    return root;
+}

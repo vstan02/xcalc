@@ -22,7 +22,7 @@
 #include "gui/gui.h"
 
 double app_calculate(App* app, char* expression) {
-    calculator_calculate((Calculator*) app, expression);
+    return calculator_calculate((Calculator*) app, expression);
 }
 
 int main(int argc, char** argv) {

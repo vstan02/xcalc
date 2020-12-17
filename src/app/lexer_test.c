@@ -3,15 +3,15 @@
 #include "app_tests.h"
 #include "lexer.h"
 
-static void test_lexer_main(void);
+static void test_lexer_lexer(void);
 static void test_lexer_get_next_token(void);
 
 void test_lexer(void) {
-    test_lexer_main();
+    g_test_add_func(TEST_LEXER_PATH "/lexer", test_lexer_lexer);
     g_test_add_func(TEST_LEXER_PATH "/get_next_token", test_lexer_get_next_token);
 }
 
-static void test_lexer_main(void) {
+static void test_lexer_lexer(void) {
     Lexer* lexer = lexer_create("test");
     g_assert_nonnull(lexer);
     lexer_destroy(lexer);

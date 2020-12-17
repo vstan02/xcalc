@@ -3,15 +3,15 @@
 #include "gui_tests.h"
 #include "size.h"
 
-static void test_size_main(void);
+static void test_size_size(void);
 static void test_size_fields(void);
 
 void test_size(void) {
-    test_size_main();
+    g_test_add_func(TEST_SIZE_PATH "/size", test_size_size);
     g_test_add_func(TEST_SIZE_PATH "/fields", test_size_fields);
 }
 
-static void test_size_main(void) {
+static void test_size_size(void) {
     Size* size = size_create(20, 20);
     g_assert_nonnull(size);
     size_destroy(size);

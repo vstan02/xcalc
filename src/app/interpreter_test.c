@@ -3,15 +3,15 @@
 #include "app_tests.h"
 #include "interpreter.h"
 
-static void test_interpreter_main(void);
+static void test_interpreter_interpreter(void);
 static void test_interpreter_process(void);
 
 void test_interpreter(void) {
-    test_interpreter_main();
+    g_test_add_func(TEST_INTERPRETER_PATH "/interpreter", test_interpreter_interpreter);
     g_test_add_func(TEST_INTERPRETER_PATH "/process", test_interpreter_process);
 }
 
-static void test_interpreter_main(void) {
+static void test_interpreter_interpreter(void) {
     Interpreter* interpreter = interpreter_create("4 + 7");
     g_assert_nonnull(interpreter);
     interpreter_destroy(interpreter);

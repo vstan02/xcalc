@@ -3,15 +3,15 @@
 #include "app_tests.h"
 #include "token.h"
 
-static void test_token_main(void);
+static void test_token_token(void);
 static void test_token_getters(void);
 
 void test_token(void) {
-    test_token_main();
+    g_test_add_func(TEST_TOKEN_PATH "/token", test_token_token);
     g_test_add_func(TEST_TOKEN_PATH "/getters", test_token_getters);
 }
 
-static void test_token_main(void) {
+static void test_token_token(void) {
     Token* token = token_create(NUMBER, 5);
     g_assert_nonnull(token);
     token_destroy(token);

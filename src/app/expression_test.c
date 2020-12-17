@@ -3,15 +3,15 @@
 #include "app_tests.h"
 #include "expression.h"
 
-static void test_expression_main(void);
+static void test_expression_expression(void);
 static void test_expression_getters(void);
 
 void test_expression(void) {
-    test_expression_main();
+    g_test_add_func(TEST_EXPRESSION_PATH "/expression", test_expression_expression);
     g_test_add_func(TEST_EXPRESSION_PATH "/getters", test_expression_getters);
 }
 
-static void test_expression_main(void) {
+static void test_expression_expression(void) {
     Expression* expression = expression_create("test");
     g_assert_nonnull(expression);
     expression_destroy(expression);

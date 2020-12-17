@@ -34,7 +34,7 @@ PRIVATE_DATA {
 
 static double interpreter_process_unary(Interpreter*);
 static double interpreter_process_paren(Interpreter*);
-static double interpreter_process_expression(Interpreter*);
+static MODULE_METHOD(interpreter, process_expression,METHOD_ARGS(Interpreter, double* result))
 static double interpreter_process_addition(Interpreter*, double);
 static double interpreter_process_multiplication(Interpreter*, double);
 
@@ -107,18 +107,18 @@ static double interpreter_process_unary(Interpreter* self) {
 
 static double interpreter_process_paren(Interpreter* self) {
     interpreter_eat_token(self, LPAREN);
-    double result = interpreter_process_expression(self);
+    double result;
+    DANGER(interpreter_process_expression(self, &result))
     interpreter_eat_token(self, RPAREN);
     return result;
 }
 
-static double interpreter_process_expression(Interpreter* self) {
-    double result = interpreter_process_term(self);
+static MODULE_IMPL(interpreter, process_expression, METHOD_ARGS(Interpreter, double* result), {
+    *result = interpreter_process_term(self);
     while (interpreter_is_addition_operator(self)) {
-        result = interpreter_process_addition(self, result);
+        *result = interpreter_process_addition(self, *result);
     }
-    return result;
-}
+})
 
 static double interpreter_process_addition(Interpreter* self, double initial) {
     Token* token = interpreter_get_token(self);
@@ -148,9 +148,9 @@ static double interpreter_process_multiplication(Interpreter* self, double initi
     }
 }
 
-double interpreter_process(Interpreter* self) {
-    return interpreter_process_expression(self);
-}
+MODULE_IMPL(interpreter, process, METHOD_ARGS(Interpreter, double* result), {
+    return interpreter_process_expression(self, result);
+})
 
 MODULE_SET_CONSTRUCTOR(
     interpreter, Interpreter,

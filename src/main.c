@@ -18,11 +18,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "core/error.h"
 #include "app/calculator.h"
 #include "gui/gui.h"
 
 double app_calculate(App* app, char* expression) {
-    return calculator_calculate((Calculator*) app, expression);
+    double result;
+    DANGER(calculator_calculate((Calculator*) app, expression, &result), {
+        throw_error("Invalid syntax");
+    })
+    return result;
 }
 
 int main(int argc, char** argv) {

@@ -18,16 +18,24 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef X_CALC_INTERPRETER_H
-#define X_CALC_INTERPRETER_H
+#ifndef XCALC_FUNCTION_H
+#define XCALC_FUNCTION_H
 
-#include "core/module.h"
+#include <stdbool.h>
 
-MODULE_CLASS(interpreter, Interpreter, {})
+#define DANGER(condition, body...) \
+    if (condition) { \
+        body \
+        return true; \
+    }
 
-MODULE_CONSTRUCTOR(interpreter, Interpreter, char* expression)
-MODULE_DESTRUCTOR(interpreter, Interpreter)
+#define FUNCTION_DEF(name, args) \
+    bool name args;
 
-MODULE_METHOD(interpreter, process,METHOD_ARGS(Interpreter, double* result))
+#define FUNCTION_IMPL(name, args, body) \
+    bool name args { \
+        body \
+        return false; \
+    }
 
-#endif // X_CALC_INTERPRETER_H
+#endif // XCALC_FUNCTION_H

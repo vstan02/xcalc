@@ -28,6 +28,6 @@ MODULE_CLASS(calculator, Calculator, {})
 MODULE_CONSTRUCTOR(calculator, Calculator)
 MODULE_DESTRUCTOR(calculator, Calculator)
 
-double calculator_calculate(Calculator* self, char* expression);
+MODULE_METHOD(calculator, calculate,METHOD_ARGS(Calculator, char* expression, double* result))
 
 #endif // X_CALC_CALCULATOR_H

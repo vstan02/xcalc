@@ -21,6 +21,10 @@
 #ifndef X_CALC_MODULE_H
 #define X_CALC_MODULE_H
 
+#include <malloc.h>
+
+#include "function.h"
+
 #define PRIVATE_DATA struct Private
 
 #define MODULE_PRIVATE(module, instance) instance->module##_private
@@ -68,5 +72,13 @@
         } \
     } \
     void module##_reset(class* self)
+
+#define METHOD_ARGS(class, args...) (class* self, ##args)
+
+#define MODULE_METHOD(module, method, args) \
+    FUNCTION_DEF(module##_##method, args)
+
+#define MODULE_IMPL(module, method, args, body) \
+    FUNCTION_IMPL(module##_##method, args, body)
 
 #endif // X_CALC_MODULE_H

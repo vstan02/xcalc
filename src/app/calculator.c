@@ -18,17 +18,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <malloc.h>
-
 #include "calculator.h"
 #include "interpreter.h"
 
-double calculator_calculate(Calculator* self, char* expression) {
+MODULE_IMPL(calculator, calculate, METHOD_ARGS(Calculator, char* expression, double* result), {
     Interpreter* interpreter = interpreter_create(expression);
-    double result = interpreter_process(interpreter);
+    DANGER(interpreter_process(interpreter, result), {
+        interpreter_destroy(interpreter);
+    })
     interpreter_destroy(interpreter);
-    return result;
-}
+})
 
 MODULE_SET_CONSTRUCTOR(calculator, Calculator, MODULE_INIT_PARAMS()) {}
 MODULE_SET_DESTRUCTOR(calculator, Calculator) {}

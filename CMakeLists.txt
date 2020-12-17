@@ -7,15 +7,16 @@ set(CMAKE_C_FLAGS -fms-extensions)
 set(
     XCALC_HEADERS
     src/core/test.h
-    src/app/app_tests.h
-    src/gui/gui_tests.h
     src/core/module.h
     src/core/error.h
+    src/core/function.h
+    src/app/app_tests.h
     src/app/token.h
     src/app/lexer.h
     src/app/interpreter.h
     src/app/expression.h
     src/app/calculator.h
+    src/gui/gui_tests.h
     src/gui/app.h
     src/gui/gui.h
     src/gui/window.h

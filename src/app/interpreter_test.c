@@ -19,7 +19,9 @@ static void test_interpreter_interpreter(void) {
 
 static void verify_expression_processing(char* exp, double result) {
     Interpreter* interpreter = interpreter_create(exp);
-    g_assert_cmpfloat(interpreter_process(interpreter), ==, result);
+    double res;
+    interpreter_process(interpreter, &res);
+    g_assert_cmpfloat(res, ==, result);
     interpreter_destroy(interpreter);
 }
 

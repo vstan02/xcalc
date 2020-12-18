@@ -25,8 +25,8 @@
 #include "comps/root_comp.h"
 
 #define WIN_TITLE "xCalc"
-#define WIN_WIDTH 320
-#define WIN_HEIGHT 400
+#define WIN_WIDTH 300
+#define WIN_HEIGHT 360
 
 #define PRIVATE(object) ((PRIVATE_DATA*) MODULE_PRIVATE(gui, object))
 

@@ -37,11 +37,7 @@ double token_get_payload(Token* self) {
     return PRIVATE(self)->payload;
 }
 
-MODULE_SET_CONSTRUCTOR(
-    token, Token,
-    MODULE_INIT_PARAMS(type, payload),
-    TokenType type, double payload
-) {
+MODULE_SET_CONSTRUCTOR(token, Token, MODULE_INIT_PARAMS(type, payload), TokenType type, double payload) {
     MODULE_INIT_PRIVATE(token, self);
     PRIVATE(self)->type = type;
     PRIVATE(self)->payload = payload;

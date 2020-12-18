@@ -55,11 +55,7 @@ char expression_get_char(Expression* self, size_t index) {
     return '\0';
 }
 
-MODULE_SET_CONSTRUCTOR(
-    expression, Expression,
-    MODULE_INIT_PARAMS(string),
-    char* string
-) {
+MODULE_SET_CONSTRUCTOR(expression, Expression, MODULE_INIT_PARAMS(string), char* string) {
     MODULE_INIT_PRIVATE(expression, self);
     expression_set_size(self, strlen(string));
     expression_set_target(self, string);

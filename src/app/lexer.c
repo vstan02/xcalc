@@ -143,11 +143,7 @@ Token* lexer_get_next_token(Lexer* self) {
     return token_create(END, 0);
 }
 
-MODULE_SET_CONSTRUCTOR(
-    lexer, Lexer,
-    MODULE_INIT_PARAMS(expression),
-    char* expression
-) {
+MODULE_SET_CONSTRUCTOR(lexer, Lexer, MODULE_INIT_PARAMS(expression), char* expression) {
     MODULE_INIT_PRIVATE(lexer, self);
     PRIVATE(self)->position = 0;
     PRIVATE(self)->expression = expression_create(expression);

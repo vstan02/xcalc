@@ -21,7 +21,6 @@
 #include <malloc.h>
 #include <stdbool.h>
 
-#include "core/error.h"
 #include "lexer.h"
 #include "interpreter.h"
 
@@ -32,11 +31,11 @@ PRIVATE_DATA {
     Token* token;
 };
 
-static double interpreter_process_unary(Interpreter*);
-static double interpreter_process_paren(Interpreter*);
-static MODULE_METHOD(interpreter, process_expression,METHOD_ARGS(Interpreter, double* result))
-static double interpreter_process_addition(Interpreter*, double);
-static double interpreter_process_multiplication(Interpreter*, double);
+static MODULE_METHOD(interpreter, process_unary,METHOD_ARGS(Interpreter, double*))
+static MODULE_METHOD(interpreter, process_paren,METHOD_ARGS(Interpreter, double*))
+static MODULE_METHOD(interpreter, process_expression,METHOD_ARGS(Interpreter, double*))
+static MODULE_METHOD(interpreter, process_addition,METHOD_ARGS(Interpreter, double, double*))
+static MODULE_METHOD(interpreter, process_multiplication,METHOD_ARGS(Interpreter, double, double*))
 
 static Token* interpreter_get_next_token(Interpreter* self) {
     return lexer_get_next_token(PRIVATE(self)->lexer);
@@ -58,105 +57,82 @@ static bool interpreter_is_multiplication_operator(Interpreter* self) {
         || token_get_type(token) == DIVISION;
 }
 
-static void interpreter_eat_token(Interpreter* self, TokenType type) {
+static MODULE_IMPL(interpreter, eat_token, METHOD_ARGS(Interpreter, TokenType type), {
     Token *token = interpreter_get_token(self);
-    if (token_get_type(token) == type) {
-        token_destroy(token);
-        PRIVATE(self)->token = interpreter_get_next_token(self);
-    } else {
-        throw_error("Interpreter::eat_token - Invalid syntax");
-    }
-}
+    DANGER(token_get_type(token) != type)
 
-static double interpreter_process_factor(Interpreter* self) {
+    token_destroy(token);
+    PRIVATE(self)->token = interpreter_get_next_token(self);
+})
+
+static MODULE_IMPL(interpreter, process_factor, METHOD_ARGS(Interpreter, double* result), {
     if (interpreter_is_addition_operator(self)) {
-        return interpreter_process_unary(self);
+        interpreter_process_unary(self, result);
     }
 
     Token* token = interpreter_get_token(self);
     if (token_get_type(token) == LPAREN) {
-        return interpreter_process_paren(self);
+        interpreter_process_paren(self, result);
     }
 
-    double result = token_get_payload(token);
+    *result = token_get_payload(token);
     interpreter_eat_token(self, NUMBER);
-    return result;
-}
+})
 
-static double interpreter_process_term(Interpreter* self) {
-    double result = interpreter_process_factor(self);
+static MODULE_IMPL(interpreter, process_term, METHOD_ARGS(Interpreter, double* result), {
+    interpreter_process_factor(self, result);
     while (interpreter_is_multiplication_operator(self)) {
-        result = interpreter_process_multiplication(self, result);
-    }
-    return result;
-}
-
-static double interpreter_process_unary(Interpreter* self) {
-    Token* token = interpreter_get_token(self);
-    switch (token_get_type(token)) {
-        case PLUS:
-            interpreter_eat_token(self, PLUS);
-            return interpreter_process_factor(self);
-        case MINUS:
-            interpreter_eat_token(self, MINUS);
-            return -interpreter_process_factor(self);
-        default:
-            throw_error("Interpreter::process_unary - Invalid syntax");
-    }
-}
-
-static double interpreter_process_paren(Interpreter* self) {
-    interpreter_eat_token(self, LPAREN);
-    double result;
-    DANGER(interpreter_process_expression(self, &result))
-    interpreter_eat_token(self, RPAREN);
-    return result;
-}
-
-static MODULE_IMPL(interpreter, process_expression, METHOD_ARGS(Interpreter, double* result), {
-    *result = interpreter_process_term(self);
-    while (interpreter_is_addition_operator(self)) {
-        *result = interpreter_process_addition(self, *result);
+        interpreter_process_multiplication(self, *result, result);
     }
 })
 
-static double interpreter_process_addition(Interpreter* self, double initial) {
-    Token* token = interpreter_get_token(self);
-    switch (token_get_type(token)) {
-        case PLUS:
-            interpreter_eat_token(self, PLUS);
-            return initial + interpreter_process_term(self);
-        case MINUS:
-            interpreter_eat_token(self, MINUS);
-            return initial - interpreter_process_term(self);
-        default:
-            throw_error("Interpreter::process_addition - Invalid syntax");
-    }
-}
+static MODULE_IMPL(interpreter, process_unary, METHOD_ARGS(Interpreter, double* result), {
+    TokenType type = token_get_type(interpreter_get_token(self));
+    DANGER(type != PLUS && type != MINUS)
 
-static double interpreter_process_multiplication(Interpreter* self, double initial) {
-    Token* token = interpreter_get_token(self);
-    switch (token_get_type(token)) {
-        case MULTIPLICATION:
-            interpreter_eat_token(self, MULTIPLICATION);
-            return initial * interpreter_process_factor(self);
-        case DIVISION:
-            interpreter_eat_token(self, DIVISION);
-            return initial / interpreter_process_factor(self);
-        default:
-            throw_error("Interpreter::process_multiplication - Invalid syntax");
+    interpreter_eat_token(self, type);
+    interpreter_process_term(self, result);
+    if (type == MINUS) {
+        *result = -*result;
     }
-}
+})
+
+static MODULE_IMPL(interpreter, process_paren, METHOD_ARGS(Interpreter, double* result), {
+    interpreter_eat_token(self, LPAREN);
+    DANGER(interpreter_process_expression(self, result))
+    interpreter_eat_token(self, RPAREN);
+})
+
+static MODULE_IMPL(interpreter, process_expression, METHOD_ARGS(Interpreter, double* result), {
+    interpreter_process_term(self, result);
+    while (interpreter_is_addition_operator(self)) {
+        interpreter_process_addition(self, *result, result);
+    }
+})
+
+static MODULE_IMPL(interpreter, process_addition, METHOD_ARGS(Interpreter, double initial, double* result), {
+    TokenType type = token_get_type(interpreter_get_token(self));
+    DANGER(type != PLUS && type != MINUS)
+
+    interpreter_eat_token(self, type);
+    interpreter_process_term(self, result);
+    *result = type == PLUS ? initial + *result : initial - *result;
+})
+
+static MODULE_IMPL(interpreter, process_multiplication, METHOD_ARGS(Interpreter, double initial, double* result), {
+    TokenType type = token_get_type(interpreter_get_token(self));
+    DANGER(type != MULTIPLICATION && type != DIVISION)
+
+    interpreter_eat_token(self, type);
+    interpreter_process_factor(self, result);
+    *result = type == MULTIPLICATION ? initial * *result : initial / *result;
+})
 
 MODULE_IMPL(interpreter, process, METHOD_ARGS(Interpreter, double* result), {
     return interpreter_process_expression(self, result);
 })
 
-MODULE_SET_CONSTRUCTOR(
-    interpreter, Interpreter,
-    MODULE_INIT_PARAMS(expression),
-    char* expression
-) {
+MODULE_SET_CONSTRUCTOR(interpreter, Interpreter, MODULE_INIT_PARAMS(expression), char* expression) {
     MODULE_INIT_PRIVATE(interpreter, self);
     PRIVATE(self)->lexer = lexer_create(expression);
     PRIVATE(self)->token = interpreter_get_next_token(self);

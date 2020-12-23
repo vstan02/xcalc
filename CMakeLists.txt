@@ -4,7 +4,7 @@ project(xCalc C)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_FLAGS -fms-extensions)
 
-set(XCALC_SOURCES src/app/text.c)
+set(XCALC_SOURCES src/app/text.c src/app/lexer.c src/app/token.c)
 set(XCALC_TESTS)
 
 include_directories(src)

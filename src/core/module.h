@@ -17,40 +17,26 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <malloc.h>
-#include <string.h>
-#include <stdbool.h>
+#ifndef XCALC_MODULE_H
+#define XCALC_MODULE_H
 
-#include "core/private.h"
-#include "core/module.h"
-#include "text.h"
+#define PARAMS(args...) (self, ##args)
 
-PRIVATE_DATA {
-    int8_t length;
-    const char* target;
-};
+#define CONSTRUCTOR(module, class, params, args...) \
+    class* module##_create(args) { \
+        class* self = (class*) malloc(sizeof(class)); \
+        module##_init params; \
+        return self; \
+    } \
+    void module##_init(class* self, ##args)
 
-static bool text_is_valid_index(Text* self, int8_t index) {
-    return index >= 0 && index < PRIVATE(self)->length;
-}
+#define DESTRUCTOR(module, class) \
+    void module##_destroy(class* self) { \
+        if (self) { \
+            module##_reset(self); \
+            free(self); \
+        } \
+    } \
+    void module##_reset(class* self)
 
-int8_t text_get_size(Text* self) {
-    return PRIVATE(self)->length;
-}
-
-char text_get_char(Text* self, int8_t index) {
-    if (text_is_valid_index(self, index)) {
-        return PRIVATE(self)->target[index];
-    }
-    return '\0';
-}
-
-CONSTRUCTOR(text, Text, PARAMS(text), const char* text) {
-    PRIVATE_INIT(self);
-    PRIVATE(self)->length = strlen(text);
-    PRIVATE(self)->target = text;
-}
-
-DESTRUCTOR(text, Text) {
-    PRIVATE_RESET(self);
-}
+#endif // XCALC_MODULE_H

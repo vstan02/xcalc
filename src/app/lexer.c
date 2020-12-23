@@ -21,6 +21,7 @@
 #include <stdbool.h>
 
 #include "core/private.h"
+#include "core/module.h"
 #include "text.h"
 #include "lexer.h"
 
@@ -116,27 +117,14 @@ static Token* lexer_get_next(Lexer* self, int8_t* error) {
     return token_create(END, 0);
 }
 
-void lexer_init(Lexer* self, const char* expression) {
+CONSTRUCTOR(text, Text, PARAMS(expression), const char* expression) {
     PRIVATE_INIT(self);
     PRIVATE(self)->current = expression[0];
     PRIVATE(self)->expression = text_create(expression);
     PRIVATE(self)->position = 0;
 }
 
-Lexer* lexer_create(const char* expression) {
-    Lexer* self = (Lexer*) malloc(sizeof(Lexer));
-    lexer_init(self, expression);
-    return self;
-}
-
-void lexer_reset(Lexer* self) {
+DESTRUCTOR(lexer, Lexer) {
     text_destroy(PRIVATE(self)->expression);
     PRIVATE_RESET(self);
-}
-
-void lexer_destroy(Lexer* self) {
-    if (self) {
-        lexer_reset(self);
-        free(self);
-    }
 }

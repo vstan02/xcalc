@@ -20,6 +20,7 @@
 #include <malloc.h>
 
 #include "core/private.h"
+#include "core/module.h"
 #include "token.h"
 
 PRIVATE_DATA {
@@ -27,25 +28,12 @@ PRIVATE_DATA {
     double payload;
 };
 
-void token_init(Token* self, TokenType type, double payload) {
+CONSTRUCTOR(token, Token, PARAMS(type, payload), TokenType type, double payload) {
     PRIVATE_INIT(self);
     PRIVATE(self)->payload = payload;
     PRIVATE(self)->type = type;
 }
 
-Token* token_create(TokenType type, double payload) {
-    Token* self = (Token*) malloc(sizeof(Token));
-    token_init(self, type, payload);
-    return self;
-}
-
-void token_reset(Token* self) {
+DESTRUCTOR(token, Token) {
     PRIVATE_RESET(self);
-}
-
-void token_destroy(Token* self) {
-    if (self) {
-        token_reset(self);
-        free(self);
-    }
 }

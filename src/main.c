@@ -1,5 +1,4 @@
-/**
- * xCalc - A fast and simple to use calculator
+/* xCalc - A fast and simple to use calculator
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -18,23 +17,4 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/error.h"
-#include "app/calculator.h"
-#include "gui/gui.h"
-
-double app_calculate(App* app, char* expression) {
-    double result;
-    DANGER(calculator_calculate((Calculator*) app, expression, &result), {
-        throw_error("Invalid syntax");
-    })
-    return result;
-}
-
-int main(int argc, char** argv) {
-    Calculator* calculator = calculator_create();
-    Gui* ui = gui_create((App*) calculator);
-    gui_run(ui, argc, argv);
-    gui_destroy(ui);
-    calculator_destroy(calculator);
-    return 0;
-}
+int main(int argc, char** argv) {}

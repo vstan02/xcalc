@@ -1,5 +1,4 @@
-/**
- * xCalc - A fast and simple to use calculator
+/* xCalc - A fast and simple to use calculator
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -18,24 +17,23 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef XCALC_FUNCTION_H
-#define XCALC_FUNCTION_H
+#ifndef X_CALC_TEXT_H
+#define X_CALC_TEXT_H
 
-#include <stdbool.h>
+#include <inttypes.h>
 
-#define DANGER(condition, body...) \
-    if (condition) { \
-        body \
-        return true; \
-    }
+typedef struct t_Text Text;
+struct t_Text {
+    void* private;
+};
 
-#define FUNCTION_DEF(name, args) \
-    bool name args;
+int8_t text_get_size(Text* self);
+char text_get_char(Text* self, int8_t index);
 
-#define FUNCTION_IMPL(name, args, body) \
-    bool name args { \
-        body \
-        return false; \
-    }
+void text_init(Text* self, const char* text);
+Text* text_create(const char* text);
 
-#endif // XCALC_FUNCTION_H
+void text_reset(Text* self);
+void text_destroy(Text* self);
+
+#endif // X_CALC_TEXT_H

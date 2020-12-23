@@ -1,5 +1,4 @@
-/**
- * xCalc - A fast and simple to use calculator
+/* xCalc - A fast and simple to use calculator
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -18,9 +17,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef XCALC_ERROR_H
-#define XCALC_ERROR_H
+#ifndef XCALC_PRIVATE_H
+#define XCALC_PRIVATE_H
 
-void throw_error(char* message);
+#define PRIVATE_DATA struct t_Private
+#define PRIVATE(object) ((PRIVATE_DATA*) (object->private))
+#define PRIVATE_INIT(object) object->private = (PRIVATE_DATA*) malloc(sizeof(PRIVATE_DATA))
+#define PRIVATE_RESET(object) free((PRIVATE_DATA*)(object->private))
 
-#endif // XCALC_ERROR_H
+#endif // XCALC_PRIVATE_H

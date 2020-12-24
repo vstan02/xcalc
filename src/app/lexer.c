@@ -17,8 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <malloc.h>
 #include <stdbool.h>
+#include <inttypes.h>
 
 #include "core/private.h"
 #include "core/module.h"
@@ -95,18 +95,18 @@ static Token* lexer_get_next_operator(Lexer* self) {
     }
 }
 
-static Token* lexer_process_lang(Lexer* self, int8_t* error) {
+static Token* lexer_process_lang(Lexer* self, Error* error) {
     if (lexer_is_digit(self))
         return lexer_get_next_number(self);
     if (lexer_is_parenthesis(self))
         return lexer_get_next_paren(self);
     if (lexer_is_operator(self))
         return lexer_get_next_operator(self);
-    *error = 22;
+    *error = INVALID_ARGUMENT;
     return NULL;
 }
 
-static Token* lexer_get_next(Lexer* self, int8_t* error) {
+static Token* lexer_get_next(Lexer* self, Error* error) {
     while (lexer_is_valid_position(self)) {
         if (lexer_is_space(self)) {
             lexer_skip_spaces(self);

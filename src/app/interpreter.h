@@ -17,39 +17,22 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
-#include <stdbool.h>
+#ifndef X_CALC_INTERPRETER_H
+#define X_CALC_INTERPRETER_H
 
-#include "core/private.h"
-#include "core/module.h"
-#include "text.h"
+#include "core/errors.h"
 
-PRIVATE_DATA {
-    int8_t length;
-    const char* target;
+typedef struct t_Interpreter Interpreter;
+struct t_Interpreter {
+    void* private;
 };
 
-static bool text_is_valid_index(Text* self, int8_t index) {
-    return index >= 0 && index < PRIVATE(self)->length;
-}
+double interpreter_process(Interpreter* self, Error* error);
 
-int8_t text_get_size(Text* self) {
-    return PRIVATE(self)->length;
-}
+void interpreter_init(Interpreter* self, const char* expression);
+Interpreter* interpreter_create(const char* expression);
 
-char text_get_char(Text* self, int8_t index) {
-    if (text_is_valid_index(self, index)) {
-        return PRIVATE(self)->target[index];
-    }
-    return '\0';
-}
+void interpreter_reset(Interpreter* self);
+void interpreter_destroy(Interpreter* self);
 
-CONSTRUCTOR(text, Text, PARAMS(text), const char* text) {
-    PRIVATE_INIT(self);
-    PRIVATE(self)->length = strlen(text);
-    PRIVATE(self)->target = text;
-}
-
-DESTRUCTOR(text, Text) {
-    PRIVATE_RESET(self);
-}
+#endif // X_CALC_INTERPRETER_H

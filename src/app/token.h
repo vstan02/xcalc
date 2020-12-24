@@ -38,6 +38,9 @@ struct t_Token {
     void* private;
 };
 
+TokenType token_get_type(Token* self);
+double token_get_payload(Token* self);
+
 void token_init(Token* self, TokenType type, double payload);
 Token* token_create(TokenType type, double payload);
 

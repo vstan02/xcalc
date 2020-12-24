@@ -17,8 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <malloc.h>
-
 #include "core/private.h"
 #include "core/module.h"
 #include "token.h"
@@ -27,6 +25,14 @@ PRIVATE_DATA {
     TokenType type;
     double payload;
 };
+
+TokenType token_get_type(Token* self) {
+    return PRIVATE(self)->type;
+}
+
+double token_get_payload(Token* self) {
+    return PRIVATE(self)->payload;
+}
 
 CONSTRUCTOR(token, Token, PARAMS(type, payload), TokenType type, double payload) {
     PRIVATE_INIT(self);

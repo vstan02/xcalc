@@ -20,7 +20,7 @@
 #ifndef X_CALC_LEXER_H
 #define X_CALC_LEXER_H
 
-#include "core/errors.h"
+#include "core/status.h"
 
 #include "token.h"
 
@@ -29,7 +29,7 @@ struct t_Lexer {
     void* private;
 };
 
-Token* lexer_get_next(Lexer* self, Error* error);
+Token* lexer_get_next(Lexer* self, Status* status);
 
 void lexer_init(Lexer* self, const char* expression);
 Lexer* lexer_create(const char* expression);

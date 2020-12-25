@@ -40,7 +40,7 @@ static bool lexer_is_space(Lexer* self) {
 }
 
 static bool lexer_is_digit(Lexer* self) {
-    return PRIVATE(self)->current > 47 || PRIVATE(self)->current < 58;
+    return PRIVATE(self)->current > 47 && PRIVATE(self)->current < 58;
 }
 
 static bool lexer_is_parenthesis(Lexer* self) {
@@ -95,29 +95,29 @@ static Token* lexer_get_next_operator(Lexer* self) {
     }
 }
 
-static Token* lexer_process_lang(Lexer* self, Error* error) {
+static Token* lexer_process_lang(Lexer* self, Status* status) {
     if (lexer_is_digit(self))
         return lexer_get_next_number(self);
     if (lexer_is_parenthesis(self))
         return lexer_get_next_paren(self);
     if (lexer_is_operator(self))
         return lexer_get_next_operator(self);
-    *error = INVALID_ARGUMENT;
+    *status = INVALID_ARGUMENT;
     return NULL;
 }
 
-static Token* lexer_get_next(Lexer* self, Error* error) {
+Token* lexer_get_next(Lexer* self, Status* status) {
     while (lexer_is_valid_position(self)) {
         if (lexer_is_space(self)) {
             lexer_skip_spaces(self);
             continue;
         }
-        return lexer_process_lang(self, error);
+        return lexer_process_lang(self, status);
     }
     return token_create(END, 0);
 }
 
-CONSTRUCTOR(text, Text, PARAMS(expression), const char* expression) {
+CONSTRUCTOR(lexer, Lexer, PARAMS(expression), const char* expression) {
     PRIVATE_INIT(self);
     PRIVATE(self)->current = expression[0];
     PRIVATE(self)->expression = text_create(expression);

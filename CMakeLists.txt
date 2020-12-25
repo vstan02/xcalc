@@ -6,14 +6,21 @@ set(CMAKE_C_FLAGS -fms-extensions)
 
 set(
     XCALC_SOURCES
-    src/core/errors.c
+    src/core/status.c
     src/app/text.c
     src/app/token.c
     src/app/lexer.c
-    src/app/interpreter.c
+    src/app/parser.c
 )
 
-set(XCALC_TESTS)
+set(
+    XCALC_TESTS
+    src/app/app_tests.c
+    src/app/token_test.c
+    src/app/text_test.c
+    src/app/lexer_test.c
+    src/app/parser_test.c
+)
 
 include_directories(src)
 

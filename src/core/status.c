@@ -18,11 +18,15 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
-#include "errors.h"
+#include "status.h"
 
-void eprint(Error code) {
-    if (code > 0 && code < sys_nerr) {
-        fprintf(stderr, "%s\n", sys_errlist[code]);
-    }
+void print_status(Status status) {
+    fprintf(stderr, "%s\n", sys_errlist[status]);
+}
+
+void throw_status(Status status) {
+    print_status(status);
+    exit(EXIT_FAILURE);
 }

@@ -17,22 +17,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef X_CALC_INTERPRETER_H
-#define X_CALC_INTERPRETER_H
+#ifndef XCALC_STATUS_H
+#define XCALC_STATUS_H
 
-#include "core/errors.h"
-
-typedef struct t_Interpreter Interpreter;
-struct t_Interpreter {
-    void* private;
+typedef enum t_Status Status;
+enum t_Status {
+    SUCCESS = 0,
+    INVALID_ARGUMENT = 22
 };
 
-double interpreter_process(Interpreter* self, Error* error);
+void print_status(Status status);
+void throw_status(Status status);
 
-void interpreter_init(Interpreter* self, const char* expression);
-Interpreter* interpreter_create(const char* expression);
-
-void interpreter_reset(Interpreter* self);
-void interpreter_destroy(Interpreter* self);
-
-#endif // X_CALC_INTERPRETER_H
+#endif // XCALC_STATUS_H

@@ -17,15 +17,22 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef XCALC_ERRORS_H
-#define XCALC_ERRORS_H
+#ifndef X_CALC_PARSER_H
+#define X_CALC_PARSER_H
 
-#include <inttypes.h>
+#include "core/status.h"
 
-typedef int8_t Error;
+typedef struct t_Parser Parser;
+struct t_Parser {
+    void* private;
+};
 
-#define INVALID_ARGUMENT 22
+double parser_process(Parser* self, Status* status);
 
-void eprint(Error error);
+void parser_init(Parser* self, const char* expression);
+Parser* parser_create(const char* expression);
 
-#endif // XCALC_ERRORS_H
+void parser_reset(Parser* self);
+void parser_destroy(Parser* self);
+
+#endif // X_CALC_PARSER_H

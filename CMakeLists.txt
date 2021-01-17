@@ -24,8 +24,8 @@ set(
 
 include_directories(src)
 
-add_executable(x_calc src/main.c ${XCALC_HEADERS} ${XCALC_SOURCES})
-add_executable(test src/test.c ${XCALC_TESTS} ${XCALC_HEADERS} ${XCALC_SOURCES})
+add_executable(x_calc src/main.c ${XCALC_SOURCES})
+add_executable(test src/test.c ${XCALC_TESTS} ${XCALC_SOURCES})
 
 # GTK3
 find_package(PkgConfig REQUIRED)

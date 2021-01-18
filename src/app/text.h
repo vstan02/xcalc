@@ -24,8 +24,8 @@
 
 typedef struct t_Text Text;
 
-extern int8_t text_get_size(Text* self);
-extern char text_get_char(Text* self, int8_t index);
+extern int8_t text_get_size(const Text* self);
+extern char text_get_char(const Text* self, int8_t index);
 
 extern Text* text_create(const char* text);
 extern void text_destroy(Text* self);

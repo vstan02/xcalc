@@ -30,26 +30,16 @@ struct t_Lexer {
     int8_t position;
 };
 
-static bool lexer_is_valid_position(Lexer* self) {
-    return self->position < text_get_size(self->expression);
+static bool lexer_at_end(const Lexer* self) {
+    return self->position >= text_get_size(self->expression);
 }
 
-static bool lexer_is_space(Lexer* self) {
+static bool lexer_is_space(const Lexer* self) {
     return self->current == ' ';
 }
 
-static bool lexer_is_digit(Lexer* self) {
+static bool lexer_is_digit(const Lexer* self) {
     return self->current > 47 && self->current < 58;
-}
-
-static bool lexer_is_parenthesis(Lexer* self) {
-    return self->current == '(' || self->current == ')';
-}
-
-static bool lexer_is_operator(Lexer* self) {
-    char current = self->current;
-    return current == '+' || current == '-'
-        || current == '*' || current == '/';
 }
 
 static void lexer_advance(Lexer* self) {
@@ -57,22 +47,14 @@ static void lexer_advance(Lexer* self) {
 }
 
 static void lexer_skip_spaces(Lexer* self) {
-    while (lexer_is_valid_position(self) && lexer_is_space(self)) {
+    while (!lexer_at_end(self) && lexer_is_space(self)) {
         lexer_advance(self);
     }
 }
 
-static Token* lexer_get_next_paren(Lexer* self) {
-    char current = self->current;
-    lexer_advance(self);
-    return current == '('
-        ? token_create(TOKEN_LPAREN, 0)
-        : token_create(TOKEN_RPAREN, 0);
-}
-
 static Token* lexer_get_next_number(Lexer* self) {
     double result = 0;
-    while (lexer_is_valid_position(self) && lexer_is_digit(self)) {
+    while (!lexer_at_end(self) && lexer_is_digit(self)) {
         result *= 10;
         result += self->current - '0';
         lexer_advance(self);
@@ -80,7 +62,7 @@ static Token* lexer_get_next_number(Lexer* self) {
     return token_create(TOKEN_NUMBER, result);
 }
 
-static Token* lexer_get_next_operator(Lexer* self) {
+static Token* lexer_get_char_token(Lexer* self, Status* status) {
     char current = self->current;
     lexer_advance(self);
     switch (current) {
@@ -88,23 +70,20 @@ static Token* lexer_get_next_operator(Lexer* self) {
         case '-': return token_create(TOKEN_MINUS, 0);
         case '*': return token_create(TOKEN_STAR, 0);
         case '/': return token_create(TOKEN_SLASH, 0);
-        default: return NULL;
+        case '(': return token_create(TOKEN_LPAREN, 0);
+        case ')': return token_create(TOKEN_RPAREN, 0);
+        default: *status = STATUS_INVARG; return NULL;
     }
 }
 
 static Token* lexer_process_lang(Lexer* self, Status* status) {
-    if (lexer_is_digit(self))
-        return lexer_get_next_number(self);
-    if (lexer_is_parenthesis(self))
-        return lexer_get_next_paren(self);
-    if (lexer_is_operator(self))
-        return lexer_get_next_operator(self);
-    *status = STATUS_INVARG;
-    return NULL;
+    return lexer_is_digit(self)
+        ? lexer_get_next_number(self)
+        : lexer_get_char_token(self, status);
 }
 
 extern Token* lexer_get_next(Lexer* self, Status* status) {
-    while (lexer_is_valid_position(self)) {
+    while (!lexer_at_end(self)) {
         if (lexer_is_space(self)) {
             lexer_skip_spaces(self);
             continue;

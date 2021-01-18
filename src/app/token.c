@@ -26,11 +26,11 @@ struct t_Token {
     double payload;
 };
 
-extern TokenType token_get_type(Token* self) {
+extern TokenType token_get_type(const Token* self) {
     return self->type;
 }
 
-extern double token_get_payload(Token* self) {
+extern double token_get_payload(const Token* self) {
     return self->payload;
 }
 

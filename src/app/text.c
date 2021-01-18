@@ -28,15 +28,15 @@ struct t_Text {
     const char* target;
 };
 
-static bool text_valid_index(Text* self, int8_t index) {
+static bool text_valid_index(const Text* self, int8_t index) {
     return index >= 0 && index < self->length;
 }
 
-extern int8_t text_get_size(Text* self) {
+extern int8_t text_get_size(const Text* self) {
     return self->length;
 }
 
-extern char text_get_char(Text* self, int8_t index) {
+extern char text_get_char(const Text* self, int8_t index) {
     if (text_valid_index(self, index))
         return self->target[index];
     return '\0';

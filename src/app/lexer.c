@@ -17,46 +17,43 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <stdbool.h>
+#include <malloc.h>
 #include <inttypes.h>
 
-#include "core/private.h"
-#include "core/module.h"
+#include "core/bool.h"
 #include "text.h"
 #include "lexer.h"
 
-PRIVATE_DATA {
+struct t_Lexer {
     char current;
     Text* expression;
     int8_t position;
 };
 
 static bool lexer_is_valid_position(Lexer* self) {
-    return PRIVATE(self)->position < text_get_size(PRIVATE(self)->expression);
+    return self->position < text_get_size(self->expression);
 }
 
 static bool lexer_is_space(Lexer* self) {
-    return PRIVATE(self)->current == ' ';
+    return self->current == ' ';
 }
 
 static bool lexer_is_digit(Lexer* self) {
-    return PRIVATE(self)->current > 47 && PRIVATE(self)->current < 58;
+    return self->current > 47 && self->current < 58;
 }
 
 static bool lexer_is_parenthesis(Lexer* self) {
-    return PRIVATE(self)->current == '(' || PRIVATE(self)->current == ')';
+    return self->current == '(' || self->current == ')';
 }
 
 static bool lexer_is_operator(Lexer* self) {
-    char current = PRIVATE(self)->current;
-    return current == '+' || current == '-' || current == '*' || current == '/';
+    char current = self->current;
+    return current == '+' || current == '-'
+        || current == '*' || current == '/';
 }
 
 static void lexer_advance(Lexer* self) {
-    PRIVATE(self)->current = text_get_char(
-        PRIVATE(self)->expression,
-        ++PRIVATE(self)->position
-    );
+    self->current = text_get_char(self->expression, ++self->position);
 }
 
 static void lexer_skip_spaces(Lexer* self) {
@@ -66,31 +63,31 @@ static void lexer_skip_spaces(Lexer* self) {
 }
 
 static Token* lexer_get_next_paren(Lexer* self) {
-    char current = PRIVATE(self)->current;
+    char current = self->current;
     lexer_advance(self);
     return current == '('
-        ? token_create(LPAREN, 0)
-        : token_create(RPAREN, 0);
+        ? token_create(TOKEN_LPAREN, 0)
+        : token_create(TOKEN_RPAREN, 0);
 }
 
 static Token* lexer_get_next_number(Lexer* self) {
     double result = 0;
     while (lexer_is_valid_position(self) && lexer_is_digit(self)) {
         result *= 10;
-        result += PRIVATE(self)->current - '0';
+        result += self->current - '0';
         lexer_advance(self);
     }
-    return token_create(NUMBER, result);
+    return token_create(TOKEN_NUMBER, result);
 }
 
 static Token* lexer_get_next_operator(Lexer* self) {
-    char current = PRIVATE(self)->current;
+    char current = self->current;
     lexer_advance(self);
     switch (current) {
-        case '+': return token_create(PLUS, 0);
-        case '-': return token_create(MINUS, 0);
-        case '*': return token_create(MULTIPLICATION, 0);
-        case '/': return token_create(DIVISION, 0);
+        case '+': return token_create(TOKEN_PLUS, 0);
+        case '-': return token_create(TOKEN_MINUS, 0);
+        case '*': return token_create(TOKEN_STAR, 0);
+        case '/': return token_create(TOKEN_SLASH, 0);
         default: return NULL;
     }
 }
@@ -102,11 +99,11 @@ static Token* lexer_process_lang(Lexer* self, Status* status) {
         return lexer_get_next_paren(self);
     if (lexer_is_operator(self))
         return lexer_get_next_operator(self);
-    *status = INVALID_ARGUMENT;
+    *status = STATUS_INVARG;
     return NULL;
 }
 
-Token* lexer_get_next(Lexer* self, Status* status) {
+extern Token* lexer_get_next(Lexer* self, Status* status) {
     while (lexer_is_valid_position(self)) {
         if (lexer_is_space(self)) {
             lexer_skip_spaces(self);
@@ -114,17 +111,20 @@ Token* lexer_get_next(Lexer* self, Status* status) {
         }
         return lexer_process_lang(self, status);
     }
-    return token_create(END, 0);
+    return token_create(TOKEN_END, 0);
 }
 
-CONSTRUCTOR(lexer, Lexer, PARAMS(expression), const char* expression) {
-    PRIVATE_INIT(self);
-    PRIVATE(self)->current = expression[0];
-    PRIVATE(self)->expression = text_create(expression);
-    PRIVATE(self)->position = 0;
+extern Lexer* lexer_create(const char* expression) {
+    Lexer* self = (Lexer*) malloc(sizeof(Lexer));
+    self->current = expression[0];
+    self->expression = text_create(expression);
+    self->position = 0;
+    return self;
 }
 
-DESTRUCTOR(lexer, Lexer) {
-    text_destroy(PRIVATE(self)->expression);
-    PRIVATE_RESET(self);
+extern void lexer_destroy(Lexer* self) {
+    if (self) {
+        text_destroy(self->expression);
+        free(self);
+    }
 }

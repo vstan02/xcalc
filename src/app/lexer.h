@@ -25,16 +25,10 @@
 #include "token.h"
 
 typedef struct t_Lexer Lexer;
-struct t_Lexer {
-    void* private;
-};
 
-Token* lexer_get_next(Lexer* self, Status* status);
+extern Token* lexer_get_next(Lexer* self, Status* status);
 
-void lexer_init(Lexer* self, const char* expression);
-Lexer* lexer_create(const char* expression);
-
-void lexer_reset(Lexer* self);
-void lexer_destroy(Lexer* self);
+extern Lexer* lexer_create(const char* expression);
+extern void lexer_destroy(Lexer* self);
 
 #endif // X_CALC_LEXER_H

@@ -21,9 +21,10 @@
 #define XCALC_STATUS_H
 
 typedef enum t_Status Status;
+
 enum t_Status {
-    SUCCESS = 0,
-    INVALID_ARGUMENT = 22
+    STATUS_SUCCESS = 0,
+    STATUS_INVARG = 22
 };
 
 void print_status(Status status);

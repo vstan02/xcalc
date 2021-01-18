@@ -23,17 +23,11 @@
 #include <inttypes.h>
 
 typedef struct t_Text Text;
-struct t_Text {
-    void* private;
-};
 
-int8_t text_get_size(Text* self);
-char text_get_char(Text* self, int8_t index);
+extern int8_t text_get_size(Text* self);
+extern char text_get_char(Text* self, int8_t index);
 
-void text_init(Text* self, const char* text);
-Text* text_create(const char* text);
-
-void text_reset(Text* self);
-void text_destroy(Text* self);
+extern Text* text_create(const char* text);
+extern void text_destroy(Text* self);
 
 #endif // X_CALC_TEXT_H

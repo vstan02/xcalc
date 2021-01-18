@@ -17,39 +17,38 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <malloc.h>
 #include <string.h>
-#include <stdbool.h>
 
-#include "core/private.h"
-#include "core/module.h"
+#include <core/bool.h>
 #include "text.h"
 
-PRIVATE_DATA {
+struct t_Text {
     int8_t length;
     const char* target;
 };
 
-static bool text_is_valid_index(Text* self, int8_t index) {
-    return index >= 0 && index < PRIVATE(self)->length;
+static bool text_valid_index(Text* self, int8_t index) {
+    return index >= 0 && index < self->length;
 }
 
-int8_t text_get_size(Text* self) {
-    return PRIVATE(self)->length;
+extern int8_t text_get_size(Text* self) {
+    return self->length;
 }
 
-char text_get_char(Text* self, int8_t index) {
-    if (text_is_valid_index(self, index)) {
-        return PRIVATE(self)->target[index];
-    }
+extern char text_get_char(Text* self, int8_t index) {
+    if (text_valid_index(self, index))
+        return self->target[index];
     return '\0';
 }
 
-CONSTRUCTOR(text, Text, PARAMS(text), const char* text) {
-    PRIVATE_INIT(self);
-    PRIVATE(self)->length = strlen(text);
-    PRIVATE(self)->target = text;
+extern Text* text_create(const char* text) {
+    Text* self = (Text*) malloc(sizeof(Text));
+    self->length = strlen(text);
+    self->target = text;
+    return self;
 }
 
-DESTRUCTOR(text, Text) {
-    PRIVATE_RESET(self);
+extern void text_destroy(Text* self) {
+    if (self) free(self);
 }

@@ -23,16 +23,10 @@
 #include "core/status.h"
 
 typedef struct t_Parser Parser;
-struct t_Parser {
-    void* private;
-};
 
-double parser_process(Parser* self, Status* status);
+extern double parser_process(Parser* self, Status* status);
 
-void parser_init(Parser* self, const char* expression);
-Parser* parser_create(const char* expression);
-
-void parser_reset(Parser* self);
-void parser_destroy(Parser* self);
+extern Parser* parser_create(const char* expression);
+extern void parser_destroy(Parser* self);
 
 #endif // X_CALC_PARSER_H

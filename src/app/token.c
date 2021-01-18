@@ -17,29 +17,30 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/private.h"
-#include "core/module.h"
+#include <malloc.h>
+
 #include "token.h"
 
-PRIVATE_DATA {
+struct t_Token {
     TokenType type;
     double payload;
 };
 
-TokenType token_get_type(Token* self) {
-    return PRIVATE(self)->type;
+extern TokenType token_get_type(Token* self) {
+    return self->type;
 }
 
-double token_get_payload(Token* self) {
-    return PRIVATE(self)->payload;
+extern double token_get_payload(Token* self) {
+    return self->payload;
 }
 
-CONSTRUCTOR(token, Token, PARAMS(type, payload), TokenType type, double payload) {
-    PRIVATE_INIT(self);
-    PRIVATE(self)->payload = payload;
-    PRIVATE(self)->type = type;
+extern Token* token_create(TokenType type, double payload) {
+    Token* self = (Token*) malloc(sizeof(Token));
+    self->type = type;
+    self->payload = payload;
+    return self;
 }
 
-DESTRUCTOR(token, Token) {
-    PRIVATE_RESET(self);
+extern void token_destroy(Token* self) {
+    if (self) free(self);
 }

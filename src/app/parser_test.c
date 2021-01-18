@@ -19,10 +19,10 @@ static void test_parser_parser(void) {
 
 static void verify_expression_processing(char* exp, double result) {
     Parser* parser = parser_create(exp);
-    Status status = SUCCESS;
+    Status status = STATUS_SUCCESS;
     double res = parser_process(parser, &status);
     g_assert_cmpfloat(res, ==, result);
-    g_assert_cmpint(status, ==, SUCCESS);
+    g_assert_cmpint(status, ==, STATUS_SUCCESS);
     parser_destroy(parser);
 }
 

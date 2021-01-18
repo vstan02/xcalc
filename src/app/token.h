@@ -24,27 +24,20 @@ typedef struct t_Token Token;
 typedef enum t_TokenType TokenType;
 
 enum t_TokenType {
-    NUMBER,
-    PLUS,
-    MINUS,
-    MULTIPLICATION,
-    DIVISION,
-    LPAREN,
-    RPAREN,
-    END
+    TOKEN_NUMBER,
+    TOKEN_PLUS,
+    TOKEN_MINUS,
+    TOKEN_STAR,
+    TOKEN_SLASH,
+    TOKEN_LPAREN,
+    TOKEN_RPAREN,
+    TOKEN_END
 };
 
-struct t_Token {
-    void* private;
-};
+extern TokenType token_get_type(Token* self);
+extern double token_get_payload(Token* self);
 
-TokenType token_get_type(Token* self);
-double token_get_payload(Token* self);
-
-void token_init(Token* self, TokenType type, double payload);
-Token* token_create(TokenType type, double payload);
-
-void token_reset(Token* self);
-void token_destroy(Token* self);
+extern Token* token_create(TokenType type, double payload);
+extern void token_destroy(Token* self);
 
 #endif // X_CALC_TOKEN_H

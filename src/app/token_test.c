@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include <glib.h>
 
 #include "app_tests.h"
 #include "token.h"

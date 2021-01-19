@@ -52,7 +52,7 @@ static void lexer_skip_spaces(Lexer* self) {
     }
 }
 
-static Token* lexer_get_next_number(Lexer* self) {
+static Token* lexer_get_number_token(Lexer* self) {
     double result = 0;
     while (!lexer_at_end(self) && lexer_is_digit(self)) {
         result *= 10;
@@ -76,9 +76,9 @@ static Token* lexer_get_char_token(Lexer* self, Status* status) {
     }
 }
 
-static Token* lexer_process_lang(Lexer* self, Status* status) {
+static Token* lexer_get_lang_token(Lexer* self, Status* status) {
     return lexer_is_digit(self)
-        ? lexer_get_next_number(self)
+        ? lexer_get_number_token(self)
         : lexer_get_char_token(self, status);
 }
 
@@ -88,7 +88,7 @@ extern Token* lexer_get_next(Lexer* self, Status* status) {
             lexer_skip_spaces(self);
             continue;
         }
-        return lexer_process_lang(self, status);
+        return lexer_get_lang_token(self, status);
     }
     return token_create(TOKEN_END, 0);
 }

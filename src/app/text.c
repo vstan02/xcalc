@@ -46,9 +46,7 @@ extern int8_t text_get_size(const Text* self) {
 }
 
 extern char text_get_char(const Text* self, int8_t index) {
-    if (text_valid_index(self, index))
-        return self->target[index];
-    return '\0';
+    return text_valid_index(self, index) ? self->target[index] : '\0';
 }
 
 static bool text_valid_index(const Text* self, int8_t index) {

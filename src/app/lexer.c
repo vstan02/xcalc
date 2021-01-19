@@ -69,8 +69,8 @@ extern Token* lexer_get_next(Lexer* self, Status* status) {
 
 static Token* lexer_get_lang_token(Lexer* self, Status* status) {
     return lexer_is_digit(self)
-           ? lexer_get_number_token(self)
-           : lexer_get_base_token(self, status);
+        ? lexer_get_number_token(self)
+        : lexer_get_base_token(self, status);
 }
 
 static Token* lexer_get_number_token(Lexer* self) {

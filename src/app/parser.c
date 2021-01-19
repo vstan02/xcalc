@@ -18,7 +18,6 @@
  */
 
 #include <malloc.h>
-#include <stdarg.h>
 
 #include "core/bool.h"
 #include "parser.h"
@@ -39,7 +38,7 @@ static void parser_consume(Parser*, TokenType, Status*);
 static void parser_advance(Parser*, Status*);
 
 static bool parser_check(Parser*, TokenType);
-static bool parser_match(Parser*, int, ...);
+static bool parser_match(Parser*, TokenType, TokenType);
 
 /* Grammar:
  * > expr: term (PLUS|MINUS term)*
@@ -72,7 +71,7 @@ extern double parser_parse(Parser* self, Status* status) {
 
 double parser_parse_expr(Parser* self, Status* status) {
     double result = parser_parse_term(self, status);
-    while (parser_match(self, 2, TOKEN_PLUS, TOKEN_MINUS)) {
+    while (parser_match(self, TOKEN_PLUS, TOKEN_MINUS)) {
         Token* token = self->token;
         parser_advance(self, status);
         result = token_get_type(token) == TOKEN_PLUS
@@ -84,7 +83,7 @@ double parser_parse_expr(Parser* self, Status* status) {
 
 double parser_parse_term(Parser* self, Status* status) {
     double result = parser_parse_factor(self, status);
-    while (parser_match(self, 2, TOKEN_STAR, TOKEN_SLASH)) {
+    while (parser_match(self, TOKEN_STAR, TOKEN_SLASH)) {
         Token* token = self->token;
         parser_advance(self, status);
         result = token_get_type(token) == TOKEN_STAR
@@ -127,15 +126,8 @@ static void parser_advance(Parser* self, Status* status) {
     self->token = lexer_get_next(self->lexer, status);
 }
 
-bool parser_match(Parser* self, int count, ...) {
-    va_list args;
-    va_start(args, count);
-    while (count--) {
-        if (parser_check(self, va_arg(args, TokenType)))
-            return true;
-    }
-    va_end(args);
-    return false;
+bool parser_match(Parser* self, TokenType type1, TokenType type2) {
+    return parser_check(self, type1) || parser_check(self, type2);
 }
 
 bool parser_check(Parser* self, TokenType type) {

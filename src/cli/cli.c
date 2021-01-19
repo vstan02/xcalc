@@ -17,20 +17,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
+#include <malloc.h>
 
-#include "cli/cli.h"
+#include "cli.h"
 
-static double calculate(const char* expression);
+struct t_Cli {
+    CliApp app;
+};
 
-int main(int argc, const char** argv) {
-    CliApp app = { calculate };
-    Cli* cli = cli_create(app);
-    cli_run(argc, argv);
-    cli_destroy(cli);
-    return 0;
+extern Cli* cli_create(CliApp app) {
+    Cli* self = (Cli*) malloc(sizeof(Cli));
+    self->app = app;
+    return self;
 }
 
-static double calculate(const char* expression) {
-    return (double) strlen(expression);
+extern void cli_destroy(Cli* self) {
+    if (self) free(self);
 }

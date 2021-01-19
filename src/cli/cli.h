@@ -17,20 +17,19 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
+#ifndef XCALC_CLI_H
+#define XCALC_CLI_H
 
-#include "cli/cli.h"
+typedef struct t_Cli Cli;
+typedef struct t_CliApp CliApp;
 
-static double calculate(const char* expression);
+struct t_CliApp {
+    double (*calculate)(const char *expression);
+};
 
-int main(int argc, const char** argv) {
-    CliApp app = { calculate };
-    Cli* cli = cli_create(app);
-    cli_run(argc, argv);
-    cli_destroy(cli);
-    return 0;
-}
+extern void cli_run(int argc, const char** argv);
 
-static double calculate(const char* expression) {
-    return (double) strlen(expression);
-}
+extern Cli* cli_create(CliApp app);
+extern void cli_destroy(Cli* self);
+
+#endif // XCALC_CLI_H

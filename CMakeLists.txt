@@ -20,7 +20,7 @@ set(
     src/app/text_test.c
     src/app/lexer_test.c
     src/app/parser_test.c
-    src/core/bool.h)
+    src/core/bool.h src/cli/cli.h src/cli/cli.c)
 
 include_directories(src)
 

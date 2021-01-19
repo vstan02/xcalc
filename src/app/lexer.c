@@ -62,7 +62,7 @@ static Token* lexer_get_number_token(Lexer* self) {
     return token_create(TOKEN_NUMBER, result);
 }
 
-static Token* lexer_get_char_token(Lexer* self, Status* status) {
+static Token* lexer_get_base_token(Lexer* self, Status* status) {
     char current = self->current;
     lexer_advance(self);
     switch (current) {
@@ -79,7 +79,7 @@ static Token* lexer_get_char_token(Lexer* self, Status* status) {
 static Token* lexer_get_lang_token(Lexer* self, Status* status) {
     return lexer_is_digit(self)
         ? lexer_get_number_token(self)
-        : lexer_get_char_token(self, status);
+        : lexer_get_base_token(self, status);
 }
 
 extern Token* lexer_get_next(Lexer* self, Status* status) {

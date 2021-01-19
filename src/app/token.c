@@ -26,14 +26,6 @@ struct t_Token {
     double payload;
 };
 
-extern TokenType token_get_type(const Token* self) {
-    return self->type;
-}
-
-extern double token_get_payload(const Token* self) {
-    return self->payload;
-}
-
 extern Token* token_create(TokenType type, double payload) {
     Token* self = (Token*) malloc(sizeof(Token));
     self->type = type;
@@ -43,4 +35,12 @@ extern Token* token_create(TokenType type, double payload) {
 
 extern void token_destroy(Token* self) {
     if (self) free(self);
+}
+
+extern TokenType token_get_type(const Token* self) {
+    return self->type;
+}
+
+extern double token_get_payload(const Token* self) {
+    return self->payload;
 }

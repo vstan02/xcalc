@@ -34,10 +34,10 @@ enum t_TokenType {
     TOKEN_END
 };
 
-extern TokenType token_get_type(const Token* self);
-extern double token_get_payload(const Token* self);
-
 extern Token* token_create(TokenType type, double payload);
 extern void token_destroy(Token* self);
+
+extern TokenType token_get_type(const Token* self);
+extern double token_get_payload(const Token* self);
 
 #endif // X_CALC_TOKEN_H

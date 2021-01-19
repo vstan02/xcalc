@@ -30,26 +30,47 @@ struct t_Lexer {
     int8_t position;
 };
 
-static bool lexer_at_end(const Lexer* self) {
-    return self->position >= text_get_size(self->expression);
+static Token* lexer_get_lang_token(Lexer*, Status*);
+static Token* lexer_get_number_token(Lexer*);
+static Token* lexer_get_base_token(Lexer*, Status*);
+
+static void lexer_skip_spaces(Lexer*);
+static void lexer_advance(Lexer*);
+
+static bool lexer_at_end(const Lexer*);
+static bool lexer_is_space(const Lexer*);
+static bool lexer_is_digit(const Lexer*);
+
+extern Lexer* lexer_create(const char* expression) {
+    Lexer* self = (Lexer*) malloc(sizeof(Lexer));
+    self->current = expression[0];
+    self->expression = text_create(expression);
+    self->position = 0;
+    return self;
 }
 
-static bool lexer_is_space(const Lexer* self) {
-    return self->current == ' ';
-}
-
-static bool lexer_is_digit(const Lexer* self) {
-    return self->current > 47 && self->current < 58;
-}
-
-static void lexer_advance(Lexer* self) {
-    self->current = text_get_char(self->expression, ++self->position);
-}
-
-static void lexer_skip_spaces(Lexer* self) {
-    while (!lexer_at_end(self) && lexer_is_space(self)) {
-        lexer_advance(self);
+extern void lexer_destroy(Lexer* self) {
+    if (self) {
+        text_destroy(self->expression);
+        free(self);
     }
+}
+
+extern Token* lexer_get_next(Lexer* self, Status* status) {
+    while (!lexer_at_end(self)) {
+        if (lexer_is_space(self)) {
+            lexer_skip_spaces(self);
+            continue;
+        }
+        return lexer_get_lang_token(self, status);
+    }
+    return token_create(TOKEN_END, 0);
+}
+
+static Token* lexer_get_lang_token(Lexer* self, Status* status) {
+    return lexer_is_digit(self)
+           ? lexer_get_number_token(self)
+           : lexer_get_base_token(self, status);
 }
 
 static Token* lexer_get_number_token(Lexer* self) {
@@ -76,34 +97,24 @@ static Token* lexer_get_base_token(Lexer* self, Status* status) {
     }
 }
 
-static Token* lexer_get_lang_token(Lexer* self, Status* status) {
-    return lexer_is_digit(self)
-        ? lexer_get_number_token(self)
-        : lexer_get_base_token(self, status);
-}
-
-extern Token* lexer_get_next(Lexer* self, Status* status) {
-    while (!lexer_at_end(self)) {
-        if (lexer_is_space(self)) {
-            lexer_skip_spaces(self);
-            continue;
-        }
-        return lexer_get_lang_token(self, status);
+static void lexer_skip_spaces(Lexer* self) {
+    while (!lexer_at_end(self) && lexer_is_space(self)) {
+        lexer_advance(self);
     }
-    return token_create(TOKEN_END, 0);
 }
 
-extern Lexer* lexer_create(const char* expression) {
-    Lexer* self = (Lexer*) malloc(sizeof(Lexer));
-    self->current = expression[0];
-    self->expression = text_create(expression);
-    self->position = 0;
-    return self;
+static void lexer_advance(Lexer* self) {
+    self->current = text_get_char(self->expression, ++self->position);
 }
 
-extern void lexer_destroy(Lexer* self) {
-    if (self) {
-        text_destroy(self->expression);
-        free(self);
-    }
+static bool lexer_at_end(const Lexer* self) {
+    return self->position >= text_get_size(self->expression);
+}
+
+static bool lexer_is_space(const Lexer* self) {
+    return self->current == ' ';
+}
+
+static bool lexer_is_digit(const Lexer* self) {
+    return self->current > 47 && self->current < 58;
 }

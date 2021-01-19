@@ -28,8 +28,17 @@ struct t_Text {
     const char* target;
 };
 
-static bool text_valid_index(const Text* self, int8_t index) {
-    return index >= 0 && index < self->length;
+static bool text_valid_index(const Text*, int8_t);
+
+extern Text* text_create(const char* text) {
+    Text* self = (Text*) malloc(sizeof(Text));
+    self->length = strlen(text);
+    self->target = text;
+    return self;
+}
+
+extern void text_destroy(Text* self) {
+    if (self) free(self);
 }
 
 extern int8_t text_get_size(const Text* self) {
@@ -42,13 +51,6 @@ extern char text_get_char(const Text* self, int8_t index) {
     return '\0';
 }
 
-extern Text* text_create(const char* text) {
-    Text* self = (Text*) malloc(sizeof(Text));
-    self->length = strlen(text);
-    self->target = text;
-    return self;
-}
-
-extern void text_destroy(Text* self) {
-    if (self) free(self);
+static bool text_valid_index(const Text* self, int8_t index) {
+    return index >= 0 && index < self->length;
 }

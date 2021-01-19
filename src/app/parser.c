@@ -29,32 +29,58 @@ struct t_Parser {
     Status status;
 };
 
+static double parser_process_expression(Parser*, Status*);
+static double parser_process_term(Parser*, Status*);
+static double parser_process_factor(Parser*, Status*);
+static double parser_process_paren(Parser*, Status*);
 static double parser_process_addition(Parser*, double, Status*);
 static double parser_process_multiplication(Parser*, double, Status*);
-static double parser_process_expression(Parser*, Status*);
 static double parser_process_unary(Parser*, Status*);
-static double parser_process_paren(Parser*, Status*);
 
-static bool parser_is_add_operator(Parser* self) {
-    Token* token = self->token;
-    return token_get_type(token) == TOKEN_PLUS
-        || token_get_type(token) == TOKEN_MINUS;
+static void parser_eat_token(Parser*, TokenType, Status*);
+
+static bool parser_is_add_operator(Parser*);
+static bool parser_is_mul_operator(Parser*);
+
+extern Parser* parser_create(const char* expression) {
+    Parser* self = (Parser*) malloc(sizeof(Parser));
+    self->status = STATUS_SUCCESS;
+    self->lexer = lexer_create(expression);
+    self->token = lexer_get_next(self->lexer, &self->status);
+    return self;
 }
 
-static bool parser_is_mul_operator(Parser* self) {
-    Token* token = self->token;
-    return token_get_type(token) == TOKEN_STAR
-        || token_get_type(token) == TOKEN_SLASH;
-}
-
-static void parser_eat_token(Parser* self, TokenType type, Status* status) {
-    Token* token = self->token;
-    if (token_get_type(token) == type) {
-        *status = STATUS_INVARG;
-    } else {
-        token_destroy(token);
-        self->token = lexer_get_next(self->lexer, status);
+extern void parser_destroy(Parser* self) {
+    if (self) {
+        token_destroy(self->token);
+        lexer_destroy(self->lexer);
+        free(self);
     }
+}
+
+extern double parser_process(Parser* self, Status* status) {
+    if (self->status) {
+        *status = self->status;
+        return 0;
+    }
+
+    return parser_process_expression(self, status);
+}
+
+static double parser_process_expression(Parser* self, Status* status) {
+    double result = parser_process_term(self, status);
+    while (parser_is_add_operator(self)) {
+        result = parser_process_addition(self, result, status);
+    }
+    return result;
+}
+
+static double parser_process_term(Parser* self, Status* status) {
+    double result = parser_process_factor(self, status);
+    while (parser_is_mul_operator(self)) {
+        result = parser_process_multiplication(self, result, status);
+    }
+    return result;
 }
 
 static double parser_process_factor(Parser* self, Status* status) {
@@ -71,29 +97,6 @@ static double parser_process_factor(Parser* self, Status* status) {
     return result;
 }
 
-static double parser_process_term(Parser* self, Status* status) {
-    double result = parser_process_factor(self, status);
-    while (parser_is_mul_operator(self)) {
-        result = parser_process_multiplication(self, result, status);
-    }
-    return result;
-}
-
-static double parser_process_unary(Parser* self, Status* status) {
-    TokenType type = token_get_type(self->token);
-    switch (type) {
-        case TOKEN_PLUS:
-            parser_eat_token(self, type, status);
-            return parser_process_term(self, status);
-        case TOKEN_MINUS:
-            parser_eat_token(self, type, status);
-            return -parser_process_term(self, status);
-        default:
-            *status = STATUS_INVARG;
-            return 0;
-    }
-}
-
 static double parser_process_paren(Parser* self, Status* status) {
     parser_eat_token(self, TOKEN_LPAREN, status);
     double result = parser_process_expression(self, status);
@@ -101,27 +104,26 @@ static double parser_process_paren(Parser* self, Status* status) {
     return result;
 }
 
-static double parser_process_expression(Parser* self, Status* status) {
-    double result = parser_process_term(self, status);
-    while (parser_is_add_operator(self)) {
-        result = parser_process_addition(self, result, status);
+static void parser_eat_token(Parser* self, TokenType type, Status* status) {
+    Token* token = self->token;
+    if (token_get_type(token) == type) {
+        *status = STATUS_INVARG;
+    } else {
+        token_destroy(token);
+        self->token = lexer_get_next(self->lexer, status);
     }
-    return result;
 }
 
-static double parser_process_addition(Parser* self, double initial, Status* status) {
-    TokenType type = token_get_type(self->token);
-    switch (type) {
-        case TOKEN_PLUS:
-            parser_eat_token(self, type, status);
-            return initial + parser_process_term(self, status);
-        case TOKEN_MINUS:
-            parser_eat_token(self, type, status);
-            return initial - parser_process_term(self, status);
-        default:
-            *status = STATUS_INVARG;
-            return 0;
-    }
+static bool parser_is_add_operator(Parser* self) {
+    Token* token = self->token;
+    return token_get_type(token) == TOKEN_PLUS
+           || token_get_type(token) == TOKEN_MINUS;
+}
+
+static bool parser_is_mul_operator(Parser* self) {
+    Token* token = self->token;
+    return token_get_type(token) == TOKEN_STAR
+           || token_get_type(token) == TOKEN_SLASH;
 }
 
 static double parser_process_multiplication(Parser* self, double initial, Status* status) {
@@ -139,27 +141,32 @@ static double parser_process_multiplication(Parser* self, double initial, Status
     }
 }
 
-extern double parser_process(Parser* self, Status* status) {
-    if (self->status) {
-        *status = self->status;
-        return 0;
+static double parser_process_addition(Parser* self, double initial, Status* status) {
+    TokenType type = token_get_type(self->token);
+    switch (type) {
+        case TOKEN_PLUS:
+            parser_eat_token(self, type, status);
+            return initial + parser_process_term(self, status);
+        case TOKEN_MINUS:
+            parser_eat_token(self, type, status);
+            return initial - parser_process_term(self, status);
+        default:
+            *status = STATUS_INVARG;
+            return 0;
     }
-
-    return parser_process_expression(self, status);
 }
 
-extern Parser* parser_create(const char* expression) {
-    Parser* self = (Parser*) malloc(sizeof(Parser));
-    self->status = STATUS_SUCCESS;
-    self->lexer = lexer_create(expression);
-    self->token = lexer_get_next(self->lexer, &self->status);
-    return self;
-}
-
-extern void parser_destroy(Parser* self) {
-    if (self) {
-        token_destroy(self->token);
-        lexer_destroy(self->lexer);
-        free(self);
+static double parser_process_unary(Parser* self, Status* status) {
+    TokenType type = token_get_type(self->token);
+    switch (type) {
+        case TOKEN_PLUS:
+            parser_eat_token(self, type, status);
+            return parser_process_term(self, status);
+        case TOKEN_MINUS:
+            parser_eat_token(self, type, status);
+            return -parser_process_term(self, status);
+        default:
+            *status = STATUS_INVARG;
+            return 0;
     }
 }

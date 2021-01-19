@@ -27,9 +27,9 @@ struct t_CliApp {
     double (*calculate)(const char *expression);
 };
 
-extern void cli_run(int argc, const char** argv);
-
 extern Cli* cli_create(CliApp app);
 extern void cli_destroy(Cli* self);
+
+extern void cli_run(int argc, const char** argv);
 
 #endif // XCALC_CLI_H

@@ -27,6 +27,6 @@ typedef struct t_Parser Parser;
 extern Parser* parser_create(const char* expression);
 extern void parser_destroy(Parser* self);
 
-extern double parser_process(Parser* self, Status* status);
+extern double parser_parse(Parser* self, Status* status);
 
 #endif // X_CALC_PARSER_H

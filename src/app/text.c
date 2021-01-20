@@ -42,11 +42,11 @@ extern void text_destroy(Text* self) {
 }
 
 extern int8_t text_get_size(const Text* self) {
-    return self->length;
+    return self ? self->length : 0;
 }
 
 extern char text_get_char(const Text* self, int8_t index) {
-    return text_valid_index(self, index) ? self->target[index] : '\0';
+    return self && text_valid_index(self, index) ? self->target[index] : '\0';
 }
 
 static bool text_valid_index(const Text* self, int8_t index) {

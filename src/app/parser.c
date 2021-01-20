@@ -63,7 +63,7 @@ extern void parser_destroy(Parser* self) {
 }
 
 extern double parser_parse(Parser* self, Status* status) {
-    if (self->status == STATUS_SUCCESS)
+    if (self && self->status == STATUS_SUCCESS)
         return parser_parse_expr(self, status);
     *status = self->status;
     return 0;

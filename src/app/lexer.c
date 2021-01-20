@@ -57,7 +57,7 @@ extern void lexer_destroy(Lexer* self) {
 }
 
 extern Token* lexer_get_next(Lexer* self, Status* status) {
-    while (!lexer_at_end(self)) {
+    while (self && !lexer_at_end(self)) {
         if (lexer_is_space(self)) {
             lexer_skip_spaces(self);
             continue;

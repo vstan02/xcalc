@@ -38,9 +38,9 @@ extern void token_destroy(Token* self) {
 }
 
 extern TokenType token_get_type(const Token* self) {
-    return self->type;
+    return self ? self->type : TOKEN_END;
 }
 
 extern double token_get_payload(const Token* self) {
-    return self->payload;
+    return self ? self->payload : 0;
 }

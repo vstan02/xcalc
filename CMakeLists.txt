@@ -2,15 +2,17 @@ cmake_minimum_required(VERSION 3.17)
 project(xCalc C)
 
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_FLAGS -fms-extensions)
+set(CMAKE_C_FLAGS)
 
 set(
     XCALC_SOURCES
     src/core/status.c
+    src/app/app.c
     src/app/text.c
     src/app/token.c
     src/app/lexer.c
     src/app/parser.c
+    src/cli/cli.c
 )
 
 set(
@@ -20,7 +22,7 @@ set(
     src/app/text_test.c
     src/app/lexer_test.c
     src/app/parser_test.c
-    src/core/bool.h src/cli/cli.h src/cli/cli.c)
+)
 
 include_directories(src)
 

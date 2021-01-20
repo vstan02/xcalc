@@ -17,14 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "app/app.h"
-#include "cli/cli.h"
+#ifndef XCALC_APP_H
+#define XCALC_APP_H
 
-CliApp app = { app_calculate };
+#include "core/status.h"
 
-int main(int argc, const char** argv) {
-    Cli* cli = cli_create(app);
-    cli_run(cli, argc, argv);
-    cli_destroy(cli);
-    return 0;
-}
+extern double app_calculate(const char* expression, Status* status);
+
+#endif //XCALC_APP_H

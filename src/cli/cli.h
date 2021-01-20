@@ -23,13 +23,15 @@
 typedef struct t_Cli Cli;
 typedef struct t_CliApp CliApp;
 
+#include "core/status.h"
+
 struct t_CliApp {
-    double (*calculate)(const char *expression);
+    double (*calculate)(const char *expression, Status* status);
 };
 
 extern Cli* cli_create(CliApp app);
 extern void cli_destroy(Cli* self);
 
-extern void cli_run(int argc, const char** argv);
+extern void cli_run(Cli* self, int argc, const char** argv);
 
 #endif // XCALC_CLI_H

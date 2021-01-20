@@ -17,14 +17,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "app/app.h"
-#include "cli/cli.h"
+#include "app.h"
+#include "parser.h"
 
-CliApp app = { app_calculate };
-
-int main(int argc, const char** argv) {
-    Cli* cli = cli_create(app);
-    cli_run(cli, argc, argv);
-    cli_destroy(cli);
-    return 0;
+extern double app_calculate(const char* expression, Status* status) {
+    Parser* parser = parser_create(expression);
+    double result = parser_parse(parser, status);
+    parser_destroy(parser);
+    return result;
 }

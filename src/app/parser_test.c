@@ -29,5 +29,5 @@ static void verify_expression_processing(const char* exp, double result) {
 static void test_parser_parse(void) {
     verify_expression_processing("3", 3);
     verify_expression_processing("3 + 4 * 2", 11);
-    verify_expression_processing("(3 + 4) * 2", 14);
+    verify_expression_processing("2 * (3 + 4)", 14);
 }

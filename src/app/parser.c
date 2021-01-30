@@ -69,7 +69,7 @@ extern double parser_parse(Parser* self, Status* status) {
     return 0;
 }
 
-double parser_parse_expr(Parser* self, Status* status) {
+static double parser_parse_expr(Parser* self, Status* status) {
     double result = parser_parse_term(self, status);
     while (parser_match(self, TOKEN_PLUS, TOKEN_MINUS)) {
         Token* token = self->token;
@@ -81,7 +81,7 @@ double parser_parse_expr(Parser* self, Status* status) {
     return result;
 }
 
-double parser_parse_term(Parser* self, Status* status) {
+static double parser_parse_term(Parser* self, Status* status) {
     double result = parser_parse_factor(self, status);
     while (parser_match(self, TOKEN_STAR, TOKEN_SLASH)) {
         Token* token = self->token;
@@ -93,7 +93,7 @@ double parser_parse_term(Parser* self, Status* status) {
     return result;
 }
 
-double parser_parse_factor(Parser* self, Status* status) {
+static double parser_parse_factor(Parser* self, Status* status) {
     Token *token = self->token;
     switch (token_get_type(token)) {
         case TOKEN_NUMBER:
@@ -107,14 +107,14 @@ double parser_parse_factor(Parser* self, Status* status) {
     }
 }
 
-double parser_parse_paren(Parser* self, Status* status) {
+static double parser_parse_paren(Parser* self, Status* status) {
     parser_consume(self, TOKEN_LPAREN, status);
     double result = parser_parse_expr(self, status);
     parser_consume(self, TOKEN_RPAREN, status);
     return result;
 }
 
-void parser_consume(Parser* self, TokenType type, Status* status) {
+static void parser_consume(Parser* self, TokenType type, Status* status) {
     if (parser_check(self, type)) {
         parser_advance(self, status);
     } else {
@@ -126,10 +126,10 @@ static void parser_advance(Parser* self, Status* status) {
     self->token = lexer_get_next(self->lexer, status);
 }
 
-bool parser_match(Parser* self, TokenType type1, TokenType type2) {
+static bool parser_match(Parser* self, TokenType type1, TokenType type2) {
     return parser_check(self, type1) || parser_check(self, type2);
 }
 
-bool parser_check(Parser* self, TokenType type) {
+static bool parser_check(Parser* self, TokenType type) {
     return token_get_type(self->token) == type;
 }

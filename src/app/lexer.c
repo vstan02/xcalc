@@ -1,4 +1,4 @@
-/* xCalc - A fast and simple to use calculator
+/* Lexer - Math expression lexical analyzer
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.

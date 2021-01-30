@@ -1,4 +1,4 @@
-/* xCalc - A fast and simple to use calculator
+/* Status - Error handling
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -28,6 +28,6 @@ enum t_Status {
 };
 
 void print_status(Status status);
-void throw_status(Status status);
+void status_throw(Status status);
 
 #endif // XCALC_STATUS_H

@@ -1,4 +1,4 @@
-/* xCalc - A fast and simple to use calculator
+/* Text - String work routines
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.

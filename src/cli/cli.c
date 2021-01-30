@@ -1,4 +1,4 @@
-/* xCalc - A fast and simple to use calculator
+/* Cli - Command line interface
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -31,7 +31,7 @@ static void cli_run_repl(Cli*);
 static void cli_process_args(Cli*, int, const char**);
 
 static void cli_process_input(Cli*, const char*);
-static void cli_print_result(Cli*, double);
+static void cli_print_result(double);
 
 extern Cli* cli_create(CliApp app) {
     Cli* self = (Cli*) malloc(sizeof(Cli));
@@ -54,7 +54,6 @@ extern void cli_run(Cli* self, int argc, const char** argv) {
 static void cli_run_repl(Cli* self) {
     size_t size = 255;
     char* buffer = (char*) malloc(size);
-    printf("Introduce an expression:\n");
     while (true) {
         printf("> ");
         getline((char**) &buffer, &size, stdin);
@@ -73,12 +72,12 @@ static void cli_process_input(Cli* self, const char* expression) {
     Status status = STATUS_SUCCESS;
     double result = self->app.calculate(expression, &status);
     if (status == STATUS_SUCCESS) {
-        cli_print_result(self, result);
+        cli_print_result(result);
     } else {
         puts("Invalid expression!");
     }
 }
 
-static void cli_print_result(Cli* self, double result) {
+static void cli_print_result(double result) {
     printf(result == (int)result ? "= %.0lf\n" : "= %f\n", result);
 }

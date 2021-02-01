@@ -7,6 +7,7 @@ set(CMAKE_C_FLAGS)
 set(
     XCALC_SOURCES
     src/core/status.c
+    src/core/file.c
     src/app/app.c
     src/app/text.c
     src/app/token.c

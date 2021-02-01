@@ -21,7 +21,10 @@
 #include <string.h>
 
 #include "core/bool.h"
+#include "core/file.h"
 #include "cli.h"
+
+#define ABOUT_FILE "../assets/about.txt"
 
 struct t_Cli {
     CliApp app;
@@ -64,8 +67,9 @@ static void cli_run_repl(Cli* self) {
 }
 
 static void cli_process_args(Cli* self, int argc, const char** argv) {
-    for (size_t index = 0; index < argc; ++index)
-        printf("%s\n", argv[index]);
+    if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")) {
+        printf("%s", file_read_all(ABOUT_FILE));
+    }
 }
 
 static void cli_process_input(Cli* self, const char* expression) {

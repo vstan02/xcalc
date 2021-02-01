@@ -22,11 +22,11 @@
 
 #include "status.h"
 
-void print_status(Status status) {
+void status_print(Status status) {
     fprintf(stderr, "%s\n", sys_errlist[status]);
 }
 
 void status_throw(Status status) {
-    print_status(status);
+    status_print(status);
     exit(EXIT_FAILURE);
 }

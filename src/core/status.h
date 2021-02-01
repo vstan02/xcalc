@@ -27,7 +27,7 @@ enum t_Status {
     STATUS_INVARG = 22
 };
 
-void print_status(Status status);
+void status_print(Status status);
 void status_throw(Status status);
 
 #endif // XCALC_STATUS_H

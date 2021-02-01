@@ -21,17 +21,22 @@
 #include <string.h>
 
 #include "core/bool.h"
-#include "core/file.h"
 #include "cli.h"
+#include "map.h"
 
 #define ABOUT_FILE "../assets/about.txt"
 
 struct t_Cli {
     CliApp app;
+    Map* options;
 };
 
 static void cli_run_repl(Cli*);
 static void cli_process_args(Cli*, int, const char**);
+
+static void cli_add_option(Cli*, const char*, void (*)(void*));
+static void cli_cmd_help(Cli*);
+static void cli_cmd_version(Cli*);
 
 static void cli_process_input(Cli*, const char*);
 static void cli_print_result(double);
@@ -39,11 +44,16 @@ static void cli_print_result(double);
 extern Cli* cli_create(CliApp app) {
     Cli* self = (Cli*) malloc(sizeof(Cli));
     self->app = app;
+    self->options = map_create();
+    cli_add_option(self, "--version, -v", (void (*)(void*)) cli_cmd_version);
     return self;
 }
 
 extern void cli_destroy(Cli* self) {
-    if (self) free(self);
+    if (self) {
+        map_destroy(self->options);
+        free(self);
+    }
 }
 
 extern void cli_run(Cli* self, int argc, const char** argv) {
@@ -67,9 +77,31 @@ static void cli_run_repl(Cli* self) {
 }
 
 static void cli_process_args(Cli* self, int argc, const char** argv) {
-    if (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")) {
-        printf("%s", file_read_all(ABOUT_FILE));
+    printf("'%s'\n", argv[1]);
+    void (*handle)(void*) = (void (*)(void*)) map_get(self->options, argv[1]);
+    return handle != NULL ? handle(self) : cli_cmd_help(self);
+}
+
+static void cli_add_option(Cli* self, const char* ids, void (*handle)(void*)) {
+    char delim[] = ", ";
+    size_t size = strlen(ids);
+    char target[size + 1];
+    strcpy(target, ids);
+
+    char* id = strtok(target, delim);
+    while (id) {
+        printf("'%s'\n", id);
+        map_put(self->options, id, handle);
+        id = strtok(NULL, delim);
     }
+}
+
+static void cli_cmd_help(Cli* self) {
+    printf("I will be happy to help you!\n");
+}
+
+static void cli_cmd_version(Cli* self) {
+    printf("xCalc: 1.0.0\n");
 }
 
 static void cli_process_input(Cli* self, const char* expression) {

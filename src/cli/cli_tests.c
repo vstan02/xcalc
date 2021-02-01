@@ -1,4 +1,4 @@
-/* xCalc test - Tests for xCalc calculator
+/* Cli tests - Tests for Cli module
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -17,10 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef XCALC_TEST_H
-#define XCALC_TEST_H
+#include "core/test.h"
+#include "cli_tests.h"
 
-void test_app(int argc, const char** argv);
-void test_cli(int argc, const char** argv);
-
-#endif // XCALC_TEST_H
+void test_cli(int argc, const char** argv) {
+    test_list();
+}

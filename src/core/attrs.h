@@ -1,4 +1,4 @@
-/* xCalc test - Tests for xCalc calculator
+/* Attrs - C attributes
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -17,10 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef XCALC_TEST_H
-#define XCALC_TEST_H
+#ifndef XCALC_ATTRS_H
+#define XCALC_ATTRS_H
 
-void test_app(int argc, const char** argv);
-void test_cli(int argc, const char** argv);
+#define NONNULL(args...) __attribute__((nonnull(args)))
 
-#endif // XCALC_TEST_H
+#endif // XCALC_ATTRS_H

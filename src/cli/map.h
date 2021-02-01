@@ -1,4 +1,4 @@
-/* xCalc test - Tests for xCalc calculator
+/* Map - Hash map
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -17,10 +17,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef XCALC_TEST_H
-#define XCALC_TEST_H
+#ifndef XCALC_MAP_H
+#define XCALC_MAP_H
 
-void test_app(int argc, const char** argv);
-void test_cli(int argc, const char** argv);
+#include "core/attrs.h"
 
-#endif // XCALC_TEST_H
+typedef struct t_Map Map;
+
+extern Map* map_create(void);
+extern void map_destroy(Map* self);
+
+extern NONNULL(1) void* map_get(Map* self, const char* key);
+extern NONNULL(1) void map_put(Map* self, const char* key, void* value);
+
+#endif // XCALC_MAP_H

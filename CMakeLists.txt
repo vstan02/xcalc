@@ -14,6 +14,8 @@ set(
     src/app/lexer.c
     src/app/parser.c
     src/cli/cli.c
+    src/cli/list.c
+    src/cli/map.c
 )
 
 set(
@@ -23,6 +25,8 @@ set(
     src/app/text_test.c
     src/app/lexer_test.c
     src/app/parser_test.c
+    src/cli/cli_tests.c
+    src/cli/list_test.c
 )
 
 include_directories(src)

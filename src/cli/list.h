@@ -1,4 +1,4 @@
-/* xCalc test - Tests for xCalc calculator
+/* List - Simple linked list
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -17,10 +17,35 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef XCALC_TEST_H
-#define XCALC_TEST_H
+#ifndef XCALC_LIST_H
+#define XCALC_LIST_H
 
-void test_app(int argc, const char** argv);
-void test_cli(int argc, const char** argv);
+#include <stddef.h>
 
-#endif // XCALC_TEST_H
+#include "core/bool.h"
+#include "core/attrs.h"
+
+typedef struct t_List List;
+
+extern List* list_create(void);
+extern void list_destroy(List* self);
+
+extern NONNULL(1) bool list_exists(List* self);
+extern NONNULL(1) void* list_get(List* self);
+
+extern NONNULL(1) void list_head(List* self);
+extern NONNULL(1) void list_next(List* self);
+
+extern NONNULL(1) void list_push(List* self, void* data);
+
+#define list_foreach(self, item, body) \
+    { \
+        list_head(self); \
+        while (list_exists(self)) { \
+            item = list_get(self); \
+            body; \
+            list_next(self); \
+        } \
+    }
+
+#endif // XCALC_LIST_H

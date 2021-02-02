@@ -22,4 +22,5 @@
 
 void test_cli(int argc, const char** argv) {
     test_list();
+    test_map();
 }

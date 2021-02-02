@@ -21,7 +21,9 @@
 #define XCALC_CLI_TESTS_H
 
 #define TEST_LIST_PATH "/cli/list"
+#define TEST_MAP_PATH "/cli/map"
 
 void test_list(void);
+void test_map(void);
 
 #endif // XCALC_CLI_TESTS_H

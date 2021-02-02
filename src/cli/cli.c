@@ -21,10 +21,15 @@
 #include <string.h>
 
 #include "core/bool.h"
+#include "core/file.h"
 #include "cli.h"
 #include "map.h"
 
+#define HELP_FILE "../assets/help.txt"
 #define ABOUT_FILE "../assets/about.txt"
+
+#define APP_NAME "x_calc"
+#define APP_VERSION "0.0.0"
 
 struct t_Cli {
     CliApp app;
@@ -37,6 +42,7 @@ static void cli_process_args(Cli*, int, const char**);
 static void cli_add_option(Cli*, const char*, void (*)(void*));
 static void cli_cmd_help(Cli*);
 static void cli_cmd_version(Cli*);
+static void cli_cmd_about(Cli*);
 
 static void cli_process_input(Cli*, const char*);
 static void cli_print_result(double);
@@ -45,7 +51,8 @@ extern Cli* cli_create(CliApp app) {
     Cli* self = (Cli*) malloc(sizeof(Cli));
     self->app = app;
     self->options = map_create();
-    cli_add_option(self, "--version, -v", (void (*)(void*)) cli_cmd_version);
+    cli_add_option(self, "-v, --version", (void (*)(void*)) cli_cmd_version);
+    cli_add_option(self, "-a, --about", (void (*)(void*)) cli_cmd_about);
     return self;
 }
 
@@ -77,7 +84,6 @@ static void cli_run_repl(Cli* self) {
 }
 
 static void cli_process_args(Cli* self, int argc, const char** argv) {
-    printf("'%s'\n", argv[1]);
     void (*handle)(void*) = (void (*)(void*)) map_get(self->options, argv[1]);
     return handle != NULL ? handle(self) : cli_cmd_help(self);
 }
@@ -85,23 +91,26 @@ static void cli_process_args(Cli* self, int argc, const char** argv) {
 static void cli_add_option(Cli* self, const char* ids, void (*handle)(void*)) {
     char delim[] = ", ";
     size_t size = strlen(ids);
-    char target[size + 1];
+    char* target = malloc(size * sizeof(char));
     strcpy(target, ids);
 
     char* id = strtok(target, delim);
     while (id) {
-        printf("'%s'\n", id);
         map_put(self->options, id, handle);
         id = strtok(NULL, delim);
     }
 }
 
 static void cli_cmd_help(Cli* self) {
-    printf("I will be happy to help you!\n");
+    printf("%s", file_read_all(HELP_FILE));
 }
 
 static void cli_cmd_version(Cli* self) {
-    printf("xCalc: 1.0.0\n");
+    printf("%s: %s\n", APP_NAME, APP_VERSION);
+}
+
+static void cli_cmd_about(Cli* self) {
+    printf("%s", file_read_all(ABOUT_FILE));
 }
 
 static void cli_process_input(Cli* self, const char* expression) {

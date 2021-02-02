@@ -1,0 +1,5 @@
+Usage: x_calc [option]
+Options:
+  -h, --help        Display this information
+  -v, --version     Display app version information
+  -a, --about       Display other details about application

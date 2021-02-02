@@ -27,6 +27,7 @@ set(
     src/app/parser_test.c
     src/cli/cli_tests.c
     src/cli/list_test.c
+    src/cli/map_test.c
 )
 
 include_directories(src)

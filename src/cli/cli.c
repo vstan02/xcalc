@@ -115,8 +115,9 @@ static void cli_cmd_about(Cli* self) {
 static void cli_process_input(Cli* self, const char* expression) {
     Status status = STATUS_SUCCESS;
     double result = self->app.calculate(expression, &status);
-    switch (status) {
-        case STATUS_SUCCESS: printf("%g\n", result);
-        default: puts("Invalid expression!");
+    if (status == STATUS_SUCCESS) {
+        printf("%g\n", result);
+    } else {
+        puts("Invalid expression!");
     }
 }

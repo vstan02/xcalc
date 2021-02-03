@@ -25,11 +25,11 @@
 #include "cli.h"
 #include "map.h"
 
-#define HELP_FILE "../assets/help.txt"
-#define ABOUT_FILE "../assets/about.txt"
-
 #define APP_NAME "x_calc"
 #define APP_VERSION "0.0.0"
+
+#define HELP_FILE "../assets/help.txt"
+#define ABOUT_FILE "../assets/about.txt"
 
 struct t_Cli {
     CliApp app;
@@ -45,7 +45,6 @@ static void cli_cmd_version(Cli*);
 static void cli_cmd_about(Cli*);
 
 static void cli_process_input(Cli*, const char*);
-static void cli_print_result(double);
 
 extern Cli* cli_create(CliApp app) {
     Cli* self = (Cli*) malloc(sizeof(Cli));
@@ -117,12 +116,8 @@ static void cli_process_input(Cli* self, const char* expression) {
     Status status = STATUS_SUCCESS;
     double result = self->app.calculate(expression, &status);
     if (status == STATUS_SUCCESS) {
-        cli_print_result(result);
+        printf("%g\n", result);
     } else {
         puts("Invalid expression!");
     }
-}
-
-static void cli_print_result(double result) {
-    printf(result == (int)result ? "= %.0lf\n" : "= %f\n", result);
 }

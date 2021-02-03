@@ -116,7 +116,7 @@ static void cli_process_input(Cli* self, const char* expression) {
     Status status = STATUS_SUCCESS;
     double result = self->app.calculate(expression, &status);
     if (status == STATUS_SUCCESS) {
-        printf("%g\n", result);
+        printf("= %g\n", result);
     } else {
         puts("Invalid expression!");
     }

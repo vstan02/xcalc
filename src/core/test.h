@@ -21,6 +21,5 @@
 #define XCALC_TEST_H
 
 void test_app(int argc, const char** argv);
-void test_cli(int argc, const char** argv);
 
 #endif // XCALC_TEST_H

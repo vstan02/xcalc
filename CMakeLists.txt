@@ -14,8 +14,6 @@ set(
     src/app/lexer.c
     src/app/parser.c
     src/cli/cli.c
-    src/cli/list.c
-    src/cli/map.c
 )
 
 set(
@@ -25,15 +23,17 @@ set(
     src/app/text_test.c
     src/app/lexer_test.c
     src/app/parser_test.c
-    src/cli/cli_tests.c
-    src/cli/list_test.c
-    src/cli/map_test.c
 )
 
 include_directories(src)
+include_directories(include)
 
 add_executable(x_calc src/main.c ${XCALC_SOURCES})
 add_executable(test src/test.c ${XCALC_TESTS} ${XCALC_SOURCES})
+
+# Conix
+target_link_libraries(x_calc conix)
+target_link_directories(x_calc PRIVATE lib)
 
 # GTK3
 find_package(PkgConfig REQUIRED)

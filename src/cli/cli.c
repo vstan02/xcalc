@@ -23,24 +23,16 @@
 #include "core/bool.h"
 #include "core/file.h"
 #include "cli.h"
-#include "map.h"
+#include "conix.h"
 
-#define APP_NAME "x_calc"
-#define APP_VERSION "0.0.0"
-
-#define HELP_FILE "../assets/help.txt"
 #define ABOUT_FILE "../assets/about.txt"
 
 struct t_Cli {
     CliApp app;
-    Map* options;
 };
 
 static void cli_run_repl(Cli*);
-static void cli_process_args(Cli*, int, const char**);
 
-static void cli_add_option(Cli*, const char*, void (*)(void*));
-static void cli_cmd_help(Cli*);
 static void cli_cmd_version(Cli*);
 static void cli_cmd_about(Cli*);
 
@@ -49,25 +41,24 @@ static void cli_process_input(Cli*, const char*);
 extern Cli* cli_create(CliApp app) {
     Cli* self = (Cli*) malloc(sizeof(Cli));
     self->app = app;
-    self->options = map_create();
-    cli_add_option(self, "-v, --version", (void (*)(void*)) cli_cmd_version);
-    cli_add_option(self, "-a, --about", (void (*)(void*)) cli_cmd_about);
     return self;
 }
 
 extern void cli_destroy(Cli* self) {
     if (self) {
-        map_destroy(self->options);
         free(self);
     }
 }
 
 extern void cli_run(Cli* self, int argc, const char** argv) {
-    if (self) {
-        return argc > 1
-            ? cli_process_args(self, argc, argv)
-            : cli_run_repl(self);
-    }
+    Conix* conix = conix_create(self->app.name, argc, argv);
+    conix_set_default(conix, conix_handler_create(cli_run_repl, self));
+    conix_add_options(conix, 2, (ConixOption[]) {
+        { "-v, --version", "Display app version", conix_handler_create(cli_cmd_version, self) },
+        { "-a, --about", "Display other app information", conix_handler_create(cli_cmd_about, NULL) }
+    });
+    conix_run(conix);
+    conix_destroy(conix);
 }
 
 static void cli_run_repl(Cli* self) {
@@ -82,30 +73,8 @@ static void cli_run_repl(Cli* self) {
     }
 }
 
-static void cli_process_args(Cli* self, int argc, const char** argv) {
-    void (*handle)(void*) = (void (*)(void*)) map_get(self->options, argv[1]);
-    return handle != NULL ? handle(self) : cli_cmd_help(self);
-}
-
-static void cli_add_option(Cli* self, const char* ids, void (*handle)(void*)) {
-    char delim[] = ", ";
-    size_t size = strlen(ids);
-    char* target = malloc(size * sizeof(char));
-    strcpy(target, ids);
-
-    char* id = strtok(target, delim);
-    while (id) {
-        map_put(self->options, id, handle);
-        id = strtok(NULL, delim);
-    }
-}
-
-static void cli_cmd_help(Cli* self) {
-    printf("%s", file_read_all(HELP_FILE));
-}
-
 static void cli_cmd_version(Cli* self) {
-    printf("%s: %s\n", APP_NAME, APP_VERSION);
+    printf("%s: v%s\n", self->app.name, self->app.version);
 }
 
 static void cli_cmd_about(Cli* self) {

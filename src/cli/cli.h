@@ -26,6 +26,8 @@ typedef struct t_CliApp CliApp;
 #include "core/status.h"
 
 struct t_CliApp {
+    char* name;
+    char* version;
     double (*calculate)(const char *expression, Status* status);
 };
 

@@ -20,7 +20,11 @@
 #include "app/app.h"
 #include "cli/cli.h"
 
-CliApp app = { app_calculate };
+CliApp app = {
+    .name = "x_calc",
+    .version = "0.0.0",
+    .calculate = app_calculate
+};
 
 int main(int argc, const char** argv) {
     Cli* cli = cli_create(app);

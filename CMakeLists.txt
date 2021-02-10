@@ -10,7 +10,6 @@ set(
     src/core/file.c
     src/app/app.c
     src/app/text.c
-    src/app/token.c
     src/app/lexer.c
     src/app/parser.c
     src/cli/cli.c
@@ -19,7 +18,6 @@ set(
 set(
     XCALC_TESTS
     src/app/app_tests.c
-    src/app/token_test.c
     src/app/text_test.c
     src/app/lexer_test.c
     src/app/parser_test.c
@@ -34,6 +32,9 @@ add_executable(test src/test.c ${XCALC_TESTS} ${XCALC_SOURCES})
 # Conix
 target_link_libraries(x_calc conix)
 target_link_directories(x_calc PRIVATE lib)
+
+target_link_libraries(test conix)
+target_link_directories(test PRIVATE lib)
 
 # GTK3
 find_package(PkgConfig REQUIRED)

@@ -29,6 +29,6 @@ typedef struct t_Lexer Lexer;
 extern Lexer* lexer_create(const char* expression);
 extern void lexer_destroy(Lexer* self);
 
-extern Token* lexer_get_next(Lexer* self, Status* status);
+extern Token lexer_get_next(Lexer* self, Status* status);
 
 #endif // X_CALC_LEXER_H

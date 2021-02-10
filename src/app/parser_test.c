@@ -36,12 +36,12 @@ static void test_parser_parser(void) {
     parser_destroy(parser);
 }
 
-static void verify_expression_processing(const char* exp, double result) {
-    Parser* parser = parser_create(exp);
+static void verify_expression_processing(const char* expression, double expected) {
+    Parser* parser = parser_create(expression);
     Status status = STATUS_SUCCESS;
-    double res = parser_parse(parser, &status);
+    double result = parser_parse(parser, &status);
     g_assert_cmpint(status, ==, STATUS_SUCCESS);
-    g_assert_cmpfloat(res, ==, result);
+    g_assert_cmpfloat(result, ==, expected);
     parser_destroy(parser);
 }
 

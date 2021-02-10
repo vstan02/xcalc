@@ -38,9 +38,9 @@ static void test_lexer_lexer(void) {
 
 static void verify_next_token_type(Lexer* lexer, TokenType type) {
     Status status = STATUS_SUCCESS;
-    Token* token = lexer_get_next(lexer, &status);
+    Token token = lexer_get_next(lexer, &status);
     g_assert_cmpint(status, ==, STATUS_SUCCESS);
-    g_assert_cmpint(token_get_type(token), ==, type);
+    g_assert_cmpint(token.type, ==, type);
 }
 
 static void test_lexer_get_next_token(void) {

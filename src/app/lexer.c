@@ -30,9 +30,9 @@ struct t_Lexer {
     int8_t position;
 };
 
-static Token* lexer_get_lang_token(Lexer*, Status*);
-static Token* lexer_get_number_token(Lexer*);
-static Token* lexer_get_base_token(Lexer*, Status*);
+static Token lexer_get_lang_token(Lexer*, Status*);
+static Token lexer_get_number_token(Lexer*);
+static Token lexer_get_base_token(Lexer*, Status*);
 
 static void lexer_skip_spaces(Lexer*);
 static void lexer_advance(Lexer*);
@@ -56,7 +56,7 @@ extern void lexer_destroy(Lexer* self) {
     }
 }
 
-extern Token* lexer_get_next(Lexer* self, Status* status) {
+extern Token lexer_get_next(Lexer* self, Status* status) {
     while (self && !lexer_at_end(self)) {
         if (lexer_is_space(self)) {
             lexer_skip_spaces(self);
@@ -64,36 +64,36 @@ extern Token* lexer_get_next(Lexer* self, Status* status) {
         }
         return lexer_get_lang_token(self, status);
     }
-    return token_create(TOKEN_END, 0);
+    return (Token) { TOKEN_END };
 }
 
-static Token* lexer_get_lang_token(Lexer* self, Status* status) {
+static Token lexer_get_lang_token(Lexer* self, Status* status) {
     return lexer_is_digit(self)
         ? lexer_get_number_token(self)
         : lexer_get_base_token(self, status);
 }
 
-static Token* lexer_get_number_token(Lexer* self) {
+static Token lexer_get_number_token(Lexer* self) {
     double result = 0;
     while (!lexer_at_end(self) && lexer_is_digit(self)) {
         result *= 10;
         result += self->current - '0';
         lexer_advance(self);
     }
-    return token_create(TOKEN_NUMBER, result);
+    return (Token) { TOKEN_NUMBER, result };
 }
 
-static Token* lexer_get_base_token(Lexer* self, Status* status) {
+static Token lexer_get_base_token(Lexer* self, Status* status) {
     char current = self->current;
     lexer_advance(self);
     switch (current) {
-        case '+': return token_create(TOKEN_PLUS, 0);
-        case '-': return token_create(TOKEN_MINUS, 0);
-        case '*': return token_create(TOKEN_STAR, 0);
-        case '/': return token_create(TOKEN_SLASH, 0);
-        case '(': return token_create(TOKEN_LPAREN, 0);
-        case ')': return token_create(TOKEN_RPAREN, 0);
-        default: *status = STATUS_INVARG; return NULL;
+        case '+': return (Token) { TOKEN_PLUS };
+        case '-': return (Token) { TOKEN_MINUS };
+        case '*': return (Token) { TOKEN_STAR };
+        case '/': return (Token) { TOKEN_SLASH };
+        case '(': return (Token) { TOKEN_LPAREN };
+        case ')': return (Token) { TOKEN_RPAREN };
+        default: *status = STATUS_INVARG; return (Token) {};
     }
 }
 

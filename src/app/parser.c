@@ -25,8 +25,8 @@
 
 struct t_Parser {
     Lexer* lexer;
-    Token* token;
     Status status;
+    Token token;
 };
 
 static double parser_parse_expr(Parser*, Status*);
@@ -56,7 +56,6 @@ extern Parser* parser_create(const char* expression) {
 
 extern void parser_destroy(Parser* self) {
     if (self) {
-        token_destroy(self->token);
         lexer_destroy(self->lexer);
         free(self);
     }
@@ -72,9 +71,9 @@ extern double parser_parse(Parser* self, Status* status) {
 static double parser_parse_expr(Parser* self, Status* status) {
     double result = parser_parse_term(self, status);
     while (parser_match(self, TOKEN_PLUS, TOKEN_MINUS)) {
-        Token* token = self->token;
+        Token token = self->token;
         parser_advance(self, status);
-        result = token_get_type(token) == TOKEN_PLUS
+        result = token.type == TOKEN_PLUS
             ? result + parser_parse_term(self, status)
             : result - parser_parse_term(self, status);
     }
@@ -84,9 +83,9 @@ static double parser_parse_expr(Parser* self, Status* status) {
 static double parser_parse_term(Parser* self, Status* status) {
     double result = parser_parse_factor(self, status);
     while (parser_match(self, TOKEN_STAR, TOKEN_SLASH)) {
-        Token* token = self->token;
+        Token token = self->token;
         parser_advance(self, status);
-        result = token_get_type(token) == TOKEN_STAR
+        result = token.type == TOKEN_STAR
             ? result * parser_parse_factor(self, status)
             : result / parser_parse_factor(self, status);
     }
@@ -94,11 +93,11 @@ static double parser_parse_term(Parser* self, Status* status) {
 }
 
 static double parser_parse_factor(Parser* self, Status* status) {
-    Token *token = self->token;
-    switch (token_get_type(token)) {
+    Token token = self->token;
+    switch (token.type) {
         case TOKEN_NUMBER:
             parser_advance(self, status);
-            return token_get_payload(token);
+            return token.value;
         case TOKEN_MINUS:
             parser_advance(self, status);
             return -parser_parse_factor(self, status);
@@ -131,5 +130,5 @@ static bool parser_match(Parser* self, TokenType type1, TokenType type2) {
 }
 
 static bool parser_check(Parser* self, TokenType type) {
-    return token_get_type(self->token) == type;
+    return self->token.type == type;
 }

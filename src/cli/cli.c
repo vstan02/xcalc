@@ -27,7 +27,7 @@
 
 #define ABOUT_FILE "../assets/about.txt"
 
-#define CONIX_HANDLER(name, data) \
+#define HANDLER(name, data) \
     conix_handler_create((void(*)(void*)) name, data)
 
 struct t_Cli {
@@ -55,10 +55,10 @@ extern void cli_destroy(Cli* self) {
 
 extern void cli_run(Cli* self, int argc, const char** argv) {
     Conix* conix = conix_create(self->app.name, argc, argv);
-    conix_set_default(conix, CONIX_HANDLER(cli_run_repl, self));
+    conix_set_default(conix, HANDLER(cli_run_repl, self));
     conix_add_options(conix, 2, (ConixOption[]) {
-        { "-v, --version", "Display app version", CONIX_HANDLER(cli_cmd_version, self) },
-        { "-a, --about", "Display other app information", CONIX_HANDLER(cli_cmd_about, NULL) }
+        { "-v, --version", "Display app version", HANDLER(cli_cmd_version, self) },
+        { "-a, --about", "Display other app information", HANDLER(cli_cmd_about, NULL) }
     });
     conix_run(conix);
     conix_destroy(conix);

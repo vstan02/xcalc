@@ -19,13 +19,13 @@
 
 #include <glib.h>
 
-#include "app_tests.h"
+#include "tests/app_tests.h"
 #include "parser.h"
 
 static void test_parser_parser(void);
 static void test_parser_parse(void);
 
-void test_parser(void) {
+extern void add_parser_tests(void) {
     g_test_add_func(TEST_PARSER_PATH "/parser", test_parser_parser);
     g_test_add_func(TEST_PARSER_PATH "/process", test_parser_parse);
 }

@@ -1,4 +1,4 @@
-/* xCalc test - Tests for xCalc calculator
+/* App tests - Tests for App module
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -17,9 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef XCALC_TEST_H
-#define XCALC_TEST_H
+#include "app_tests.h"
 
-void test_app(int argc, const char** argv);
-
-#endif // XCALC_TEST_H
+extern void add_app_module_tests(void) {
+    add_lexer_tests();
+    add_parser_tests();
+}

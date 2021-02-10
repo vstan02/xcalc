@@ -9,7 +9,6 @@ set(
     src/core/status.c
     src/core/file.c
     src/app/app.c
-    src/app/text.c
     src/app/lexer.c
     src/app/parser.c
     src/cli/cli.c
@@ -17,24 +16,21 @@ set(
 
 set(
     XCALC_TESTS
-    src/app/app_tests.c
-    src/app/text_test.c
+    src/tests/app_tests.c
     src/app/lexer_test.c
     src/app/parser_test.c
 )
 
-include_directories(src)
-include_directories(include)
-
 add_executable(x_calc src/main.c ${XCALC_SOURCES})
 add_executable(test src/test.c ${XCALC_TESTS} ${XCALC_SOURCES})
 
+include_directories(src)
+include_directories(include)
+link_directories(lib)
+
 # Conix
 target_link_libraries(x_calc conix)
-target_link_directories(x_calc PRIVATE lib)
-
 target_link_libraries(test conix)
-target_link_directories(test PRIVATE lib)
 
 # GTK3
 find_package(PkgConfig REQUIRED)

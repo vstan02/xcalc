@@ -17,11 +17,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/test.h"
-#include "app_tests.h"
+#ifndef XCALC_APP_TESTS_H
+#define XCALC_APP_TESTS_H
 
-void test_app(int argc, const char** argv) {
-    test_text();
-    test_lexer();
-    test_parser();
-}
+#define TEST_LEXER_PATH "/app/lexer"
+#define TEST_PARSER_PATH "/app/parser"
+
+extern void add_app_module_tests(void);
+
+extern void add_lexer_tests(void);
+extern void add_parser_tests(void);
+
+#endif // XCALC_APP_TESTS_H

@@ -18,16 +18,22 @@
  */
 
 #include <malloc.h>
-#include <inttypes.h>
+#include <string.h>
 
 #include "core/bool.h"
-#include "text.h"
 #include "lexer.h"
+
+typedef struct t_String String;
+
+struct t_String {
+    size_t size;
+    const char* content;
+};
 
 struct t_Lexer {
     char current;
-    Text* expression;
-    int8_t position;
+    String expression;
+    size_t position;
 };
 
 static Token lexer_get_lang_token(Lexer*, Status*);
@@ -44,14 +50,13 @@ static bool lexer_is_digit(const Lexer*);
 extern Lexer* lexer_create(const char* expression) {
     Lexer* self = (Lexer*) malloc(sizeof(Lexer));
     self->current = expression[0];
-    self->expression = text_create(expression);
+    self->expression = (String) { strlen(expression), expression };
     self->position = 0;
     return self;
 }
 
 extern void lexer_destroy(Lexer* self) {
     if (self) {
-        text_destroy(self->expression);
         free(self);
     }
 }
@@ -104,11 +109,11 @@ static void lexer_skip_spaces(Lexer* self) {
 }
 
 static void lexer_advance(Lexer* self) {
-    self->current = text_get_char(self->expression, ++self->position);
+    self->current = self->expression.content[++self->position];
 }
 
 static bool lexer_at_end(const Lexer* self) {
-    return self->position >= text_get_size(self->expression);
+    return self->position >= self->expression.size;
 }
 
 static bool lexer_is_space(const Lexer* self) {

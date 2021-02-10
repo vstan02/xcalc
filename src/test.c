@@ -19,10 +19,10 @@
 
 #include <glib.h>
 
-#include "core/test.h"
+#include "tests/app_tests.h"
 
 int main(int argc, char** argv) {
     g_test_init(&argc, &argv, NULL);
-    test_app(argc, (const char**) argv);
+    add_app_module_tests();
     return g_test_run();
 }

@@ -19,13 +19,13 @@
 
 #include <glib.h>
 
-#include "app_tests.h"
+#include "tests/app_tests.h"
 #include "lexer.h"
 
 static void test_lexer_lexer(void);
 static void test_lexer_get_next_token(void);
 
-void test_lexer(void) {
+extern void add_lexer_tests(void) {
     g_test_add_func(TEST_LEXER_PATH "/lexer", test_lexer_lexer);
     g_test_add_func(TEST_LEXER_PATH "/get_next_token", test_lexer_get_next_token);
 }

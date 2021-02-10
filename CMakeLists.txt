@@ -20,12 +20,12 @@ set(
     src/app/parser_test.c
 )
 
-add_executable(x_calc src/main.c ${XCALC_SOURCES})
-add_executable(test src/test.c ${XCALC_TESTS} ${XCALC_SOURCES})
-
 include_directories(src)
 include_directories(include)
 link_directories(lib)
+
+add_executable(x_calc src/main.c ${XCALC_SOURCES})
+add_executable(test src/test.c ${XCALC_TESTS} ${XCALC_SOURCES})
 
 # Conix
 target_link_libraries(x_calc conix)

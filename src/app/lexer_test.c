@@ -44,5 +44,6 @@ static void test_lexer_get_next(void) {
     verify_next_token_type(lexer, TOKEN_NUMBER);
     verify_next_token_type(lexer, TOKEN_RPAREN);
     verify_next_token_type(lexer, TOKEN_END);
+    verify_next_token_type(lexer, TOKEN_END);
     lexer_destroy(lexer);
 }

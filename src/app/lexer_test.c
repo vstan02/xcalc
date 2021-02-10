@@ -22,18 +22,10 @@
 #include "tests/app_tests.h"
 #include "lexer.h"
 
-static void test_lexer_lexer(void);
-static void test_lexer_get_next_token(void);
+static void test_lexer_get_next(void);
 
 extern void add_lexer_tests(void) {
-    g_test_add_func(TEST_LEXER_PATH "/lexer", test_lexer_lexer);
-    g_test_add_func(TEST_LEXER_PATH "/get_next_token", test_lexer_get_next_token);
-}
-
-static void test_lexer_lexer(void) {
-    Lexer* lexer = lexer_create("test");
-    g_assert_nonnull(lexer);
-    lexer_destroy(lexer);
+    g_test_add_func(TEST_LEXER_PATH "/get_next", test_lexer_get_next);
 }
 
 static void verify_next_token_type(Lexer* lexer, TokenType type) {
@@ -43,7 +35,7 @@ static void verify_next_token_type(Lexer* lexer, TokenType type) {
     g_assert_cmpint(token.type, ==, type);
 }
 
-static void test_lexer_get_next_token(void) {
+static void test_lexer_get_next(void) {
     Lexer* lexer = lexer_create("3 * (+2)");
     verify_next_token_type(lexer, TOKEN_NUMBER);
     verify_next_token_type(lexer, TOKEN_STAR);

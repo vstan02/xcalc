@@ -56,9 +56,7 @@ extern Lexer* lexer_create(const char* expression) {
 }
 
 extern void lexer_destroy(Lexer* self) {
-    if (self) {
-        free(self);
-    }
+    if (self) free(self);
 }
 
 extern Token lexer_get_next(Lexer* self, Status* status) {

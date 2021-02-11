@@ -98,8 +98,9 @@ static Token lexer_get_base_token(Lexer* self, Status* status) {
         case '/': return (Token) { TOKEN_SLASH };
         case '(': return (Token) { TOKEN_LPAREN };
         case ')': return (Token) { TOKEN_RPAREN };
-        default: *status = STATUS_INVARG; return (Token) {};
+        default: *status = STATUS_INVARG;
     }
+    return (Token) { TOKEN_END };
 }
 
 static void lexer_skip_spaces(Lexer* self) {

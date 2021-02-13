@@ -22,6 +22,13 @@
 
 #include "core/status.h"
 
+typedef struct t_App App;
+
+struct t_App {
+    char* name;
+    char* version;
+};
+
 extern double app_calculate(const char* expression, Status* status);
 
-#endif //XCALC_APP_H
+#endif // XCALC_APP_H

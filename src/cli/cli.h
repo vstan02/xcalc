@@ -20,18 +20,11 @@
 #ifndef XCALC_CLI_H
 #define XCALC_CLI_H
 
+#include "app/app.h"
+
 typedef struct t_Cli Cli;
-typedef struct t_CliApp CliApp;
 
-#include "core/status.h"
-
-struct t_CliApp {
-    char* name;
-    char* version;
-    double (*calculate)(const char *expression, Status* status);
-};
-
-extern Cli* cli_create(CliApp app);
+extern Cli* cli_create(App app);
 extern void cli_destroy(Cli* self);
 
 extern void cli_run(Cli* self, int argc, const char** argv);

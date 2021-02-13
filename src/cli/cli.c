@@ -31,7 +31,7 @@
     conix_handler_create((void(*)(void*)) name, data)
 
 struct t_Cli {
-    CliApp app;
+    App app;
 };
 
 static void cli_run_repl(Cli*);
@@ -41,16 +41,14 @@ static void cli_cmd_about(Cli*);
 
 static void cli_process_input(Cli*, const char*);
 
-extern Cli* cli_create(CliApp app) {
+extern Cli* cli_create(App app) {
     Cli* self = (Cli*) malloc(sizeof(Cli));
     self->app = app;
     return self;
 }
 
 extern void cli_destroy(Cli* self) {
-    if (self) {
-        free(self);
-    }
+    if (self) free(self);
 }
 
 extern void cli_run(Cli* self, int argc, const char** argv) {
@@ -86,7 +84,7 @@ static void cli_cmd_about(Cli* self) {
 
 static void cli_process_input(Cli* self, const char* expression) {
     Status status = STATUS_SUCCESS;
-    double result = self->app.calculate(expression, &status);
+    double result = app_calculate(expression, &status);
     if (status == STATUS_SUCCESS) {
         printf("= %g\n", result);
     } else {

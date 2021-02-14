@@ -17,14 +17,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "app/app.h"
 #include "cli/cli.h"
 
-App app = { "x_calc", "0.1.0" };
-
 int main(int argc, const char** argv) {
-    Cli* cli = cli_create(app);
-    cli_run(cli, argc, argv);
-    cli_destroy(cli);
+    cli_run(argc, argv);
     return 0;
 }

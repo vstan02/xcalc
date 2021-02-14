@@ -7,7 +7,7 @@ set(
     XCALC_SOURCES
     src/core/status.c
     src/core/file.c
-    src/app/app.c
+    src/app/calc.c
     src/app/lexer.c
     src/app/parser.c
     src/cli/cli.c

@@ -19,50 +19,39 @@
 
 #include <malloc.h>
 #include <string.h>
+#include <conix.h>
 
+#include "core/app.h"
+#include "core/status.h"
 #include "core/bool.h"
 #include "core/file.h"
+#include "app/calc.h"
+
 #include "cli.h"
-#include "conix.h"
 
 #define ABOUT_FILE "../assets/about.txt"
 
 #define HANDLER(name, data) \
     conix_handler_create((void(*)(void*)) name, data)
 
-struct t_Cli {
-    App app;
-};
+static void cli_repl();
+static void cli_version(void*);
+static void cli_about(void*);
 
-static void cli_run_repl(Cli*);
+static void cli_process_input(const char*);
 
-static void cli_cmd_version(Cli*);
-static void cli_cmd_about(Cli*);
-
-static void cli_process_input(Cli*, const char*);
-
-extern Cli* cli_create(App app) {
-    Cli* self = (Cli*) malloc(sizeof(Cli));
-    self->app = app;
-    return self;
-}
-
-extern void cli_destroy(Cli* self) {
-    if (self) free(self);
-}
-
-extern void cli_run(Cli* self, int argc, const char** argv) {
-    Conix* conix = conix_create(self->app.name, argc, argv);
-    conix_set_default(conix, HANDLER(cli_run_repl, self));
+extern void cli_run(int argc, const char** argv) {
+    Conix* conix = conix_create(APP_NAME, argc, argv);
+    conix_set_default(conix, HANDLER(cli_repl, NULL));
     conix_add_options(conix, 2, (ConixOption[]) {
-        { "-v, --version", "Display app version", HANDLER(cli_cmd_version, self) },
-        { "-a, --about", "Display other app information", HANDLER(cli_cmd_about, NULL) }
+        { "-v, --version", "Display app version", HANDLER(cli_version, NULL) },
+        { "-a, --about", "Display other app information", HANDLER(cli_about, NULL) }
     });
     conix_run(conix);
     conix_destroy(conix);
 }
 
-static void cli_run_repl(Cli* self) {
+static void cli_repl(void* data) {
     size_t size = 255;
     char* buffer = (char*) malloc(size);
     while (true) {
@@ -70,21 +59,21 @@ static void cli_run_repl(Cli* self) {
         getline((char**) &buffer, &size, stdin);
         buffer[strlen(buffer) - 1] = '\0';
         if (!strcmp(buffer, "exit")) return;
-        cli_process_input(self, buffer);
+        cli_process_input(buffer);
     }
 }
 
-static void cli_cmd_version(Cli* self) {
-    printf("%s: v%s\n", self->app.name, self->app.version);
+static void cli_version(void* data) {
+    printf("%s: v%s\n", APP_NAME, APP_VERSION);
 }
 
-static void cli_cmd_about(Cli* self) {
+static void cli_about(void* data) {
     printf("%s", file_read_all(ABOUT_FILE));
 }
 
-static void cli_process_input(Cli* self, const char* expression) {
+static void cli_process_input(const char* expression) {
     Status status = STATUS_SUCCESS;
-    double result = app_calculate(expression, &status);
+    double result = calc_calculate(expression, &status);
     if (status == STATUS_SUCCESS) {
         printf("= %g\n", result);
     } else {

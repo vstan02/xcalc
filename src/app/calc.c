@@ -17,18 +17,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef XCALC_APP_H
-#define XCALC_APP_H
+#include "calc.h"
+#include "parser.h"
 
-#include "core/status.h"
-
-typedef struct t_App App;
-
-struct t_App {
-    char* name;
-    char* version;
-};
-
-extern double app_calculate(const char* expression, Status* status);
-
-#endif // XCALC_APP_H
+extern double calc_calculate(const char* expression, Status* status) {
+    Parser* parser = parser_create(expression);
+    double result = parser_parse(parser, status);
+    parser_destroy(parser);
+    return result;
+}

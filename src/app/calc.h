@@ -17,12 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "app.h"
-#include "parser.h"
+#ifndef XCALC_CALC_H
+#define XCALC_CALC_H
 
-extern double app_calculate(const char* expression, Status* status) {
-    Parser* parser = parser_create(expression);
-    double result = parser_parse(parser, status);
-    parser_destroy(parser);
-    return result;
-}
+#include "core/status.h"
+
+extern double calc_calculate(const char* expression, Status* status);
+
+#endif // XCALC_CALC_H

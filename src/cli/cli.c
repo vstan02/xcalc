@@ -35,17 +35,16 @@
     conix_handler_create((void(*)(void*)) name, data)
 
 static void cli_repl();
-static void cli_version(void*);
 static void cli_about(void*);
 
 static void cli_process_input(const char*);
 
 extern void cli_run(int argc, const char** argv) {
-    Conix* conix = conix_create(APP_NAME, argc, argv);
-    conix_set_default(conix, HANDLER(cli_repl, NULL));
+    ConixApp app = { APP_NAME, APP_VERSION };
+    Conix* conix = conix_create(app, argc, argv);
     conix_add_options(conix, 2, (ConixOption[]) {
-        { "-v, --version", "Display app version", HANDLER(cli_version, NULL) },
-        { "-a, --about", "Display other app information", HANDLER(cli_about, NULL) }
+        { "-a, --about", "Display other app information", HANDLER(cli_about, NULL) },
+        { "--default", "Run app in REPL mode", HANDLER(cli_repl, NULL) }
     });
     conix_run(conix);
     conix_destroy(conix);
@@ -61,10 +60,6 @@ static void cli_repl(void* data) {
         if (!strcmp(buffer, "exit")) return;
         cli_process_input(buffer);
     }
-}
-
-static void cli_version(void* data) {
-    printf("%s: v%s\n", APP_NAME, APP_VERSION);
 }
 
 static void cli_about(void* data) {

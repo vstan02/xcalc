@@ -19,11 +19,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "status.h"
 
 void status_print(Status status) {
-    fprintf(stderr, "%s\n", sys_errlist[status]);
+    switch (status) {
+        case STATUS_SUCCESS:
+            fprintf(stderr, "Success");
+            break;
+        case STATUS_INVARG:
+            fprintf(stderr, "Invalid argument");
+            break;
+    }
 }
 
 void status_throw(Status status) {

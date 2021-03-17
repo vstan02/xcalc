@@ -32,12 +32,12 @@ target_link_libraries(test conix)
 
 # GTK3
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+pkg_check_modules(GLIB REQUIRED glib-2.0)
 
-include_directories(${GTK3_INCLUDE_DIRS})
-link_directories(${GTK3_LIBRARY_DIRS})
+include_directories(${GLIB_INCLUDE_DIRS})
+link_directories(${GLIB_LIBRARY_DIRS})
 
-add_definitions(${GTK3_CFLAGS_OTHER})
+add_definitions(${GLIB_CFLAGS_OTHER})
 
-target_link_libraries(xcalc ${GTK3_LIBRARIES})
-target_link_libraries(test ${GTK3_LIBRARIES})
+target_link_libraries(xcalc ${GLIB_LIBRARIES})
+target_link_libraries(test ${GLIB_LIBRARIES})

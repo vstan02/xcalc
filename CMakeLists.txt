@@ -6,7 +6,6 @@ set(CMAKE_C_STANDARD 11)
 set(
     XCALC_SOURCES
     src/core/status.c
-    src/core/file.c
     src/app/calc.c
     src/app/lexer.c
     src/app/parser.c
@@ -24,11 +23,11 @@ include_directories(src)
 include_directories(include)
 link_directories(lib)
 
-add_executable(x_calc src/main.c ${XCALC_SOURCES})
+add_executable(xcalc src/main.c ${XCALC_SOURCES})
 add_executable(test src/test.c ${XCALC_TESTS} ${XCALC_SOURCES})
 
 # Conix
-target_link_libraries(x_calc conix)
+target_link_libraries(xcalc conix)
 target_link_libraries(test conix)
 
 # GTK3
@@ -40,5 +39,5 @@ link_directories(${GTK3_LIBRARY_DIRS})
 
 add_definitions(${GTK3_CFLAGS_OTHER})
 
-target_link_libraries(x_calc ${GTK3_LIBRARIES})
+target_link_libraries(xcalc ${GTK3_LIBRARIES})
 target_link_libraries(test ${GTK3_LIBRARIES})

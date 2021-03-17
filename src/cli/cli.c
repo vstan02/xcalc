@@ -24,12 +24,9 @@
 #include "core/app.h"
 #include "core/status.h"
 #include "core/bool.h"
-#include "core/file.h"
 #include "app/calc.h"
 
 #include "cli.h"
-
-#define ABOUT_FILE "../assets/about.txt"
 
 #define HANDLER(name, data) \
     conix_handler_create((void(*)(void*)) name, data)
@@ -53,17 +50,20 @@ extern void cli_run(int argc, const char** argv) {
 static void cli_repl(void* data) {
     size_t size = 255;
     char* buffer = (char*) malloc(size);
+
     while (true) {
         printf("> ");
         getline((char**) &buffer, &size, stdin);
         buffer[strlen(buffer) - 1] = '\0';
-        if (!strcmp(buffer, "exit")) return;
+        if (strstr(buffer, "exit") != NULL) break;
         cli_process_input(buffer);
     }
+
+    free(buffer);
 }
 
 static void cli_about(void* data) {
-    printf("%s", file_read_all(ABOUT_FILE));
+    printf("%s", APP_ABOUT);
 }
 
 static void cli_process_input(const char* expression) {

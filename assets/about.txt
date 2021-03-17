@@ -1,7 +1,0 @@
-| xCalc - A fast and simple to use calculator
-| Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
-
-| This program comes with ABSOLUTELY NO WARRANTY.
-| This is free software, and you are welcome to redistribute
-| it under certain conditions.
-| See <https://www.gnu.org/licenses/> for more details.

@@ -1,5 +1,5 @@
 /* Cli - Command line interface
- * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
+ * Copyright (C) 2020-2021 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
  *
@@ -20,6 +20,8 @@
 #ifndef XCALC_CLI_H
 #define XCALC_CLI_H
 
-extern void cli_run(int argc, const char** argv);
+#include <stddef.h>
+
+extern void cli_run(size_t argc, const char** argv);
 
 #endif // XCALC_CLI_H

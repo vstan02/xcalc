@@ -1,5 +1,5 @@
 /* Cli - Command line interface
- * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
+ * Copyright (C) 2020-2021 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
  *
@@ -28,23 +28,22 @@
 
 #include "cli.h"
 
-#define HANDLER(name, data) \
-    conix_handler_create((void(*)(void*)) name, data)
-
-static void cli_repl();
+static void cli_repl(void*);
 static void cli_about(void*);
+static void cli_default(void*);
 
 static void cli_process_input(const char*);
 
-extern void cli_run(int argc, const char** argv) {
-    ConixApp app = { APP_NAME, APP_VERSION };
-    Conix* conix = conix_create(app, argc, argv);
-    conix_add_options(conix, 2, (ConixOption[]) {
-        { "-a, --about", "Display other app information", HANDLER(cli_about, NULL) },
-        { "--default", "Run app in REPL mode", HANDLER(cli_repl, NULL) }
+extern void cli_run(size_t argc, const char** argv) {
+    CnxApp app = { APP_NAME, APP_VERSION };
+    CnxCli* cli = cnx_cli_init(app);
+    cnx_cli_add(cli, 3, (CnxOption[]) {
+        { "--default", "Run app in REPL mode", cli_repl, NULL },
+        { "-a, --about", "Display other app information", cli_about, NULL },
+        { "*", NULL, cli_default, NULL }
     });
-    conix_run(conix);
-    conix_destroy(conix);
+    cnx_cli_run(cli, argc, argv);
+    cnx_cli_free(cli);
 }
 
 static void cli_repl(void* data) {
@@ -66,12 +65,16 @@ static void cli_about(void* data) {
     printf("%s", APP_ABOUT);
 }
 
+static void cli_default(void* data) {
+    fprintf(stderr, "%s: Invalid option!\n", APP_NAME);
+}
+
 static void cli_process_input(const char* expression) {
     Status status = STATUS_SUCCESS;
     double result = calc_calculate(expression, &status);
     if (status == STATUS_SUCCESS) {
         printf("= %g\n", result);
     } else {
-        puts("Invalid expression!");
+        fprintf(stderr, "Invalid expression!\n");
     }
 }

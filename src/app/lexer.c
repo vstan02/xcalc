@@ -18,20 +18,31 @@
  */
 
 #include <string.h>
+#include <stdbool.h>
 
-#include "core/bool.h"
 #include "lexer.h"
 
-static Token lexer_lang_token(Lexer*, Status*);
-static Token lexer_number_token(Lexer*);
-static Token lexer_base_token(Lexer*, Status*);
+static Token lang_token(Lexer*, Status*);
+static Token number_token(Lexer*);
+static Token base_token(Lexer*, Status*);
 
-static void lexer_skip_spaces(Lexer*);
-static void lexer_advance(Lexer*);
+static void skip_spaces(Lexer*);
 
-static bool lexer_at_end(const Lexer*);
-static bool lexer_is_space(const Lexer*);
-static bool lexer_is_digit(const Lexer*);
+static inline void advance(Lexer* lexer) {
+    lexer->current = lexer->expression.content[++lexer->position];
+}
+
+static inline bool at_end(const Lexer* lexer) {
+    return lexer->position >= lexer->expression.size;
+}
+
+static inline bool is_space(const Lexer* lexer) {
+    return lexer->current == ' ';
+}
+
+static inline bool is_digit(const Lexer* lexer) {
+    return lexer->current > 47 && lexer->current < 58;
+}
 
 extern void lexer_init(Lexer* lexer, const char* expression) {
     lexer->current = expression[0];
@@ -40,35 +51,35 @@ extern void lexer_init(Lexer* lexer, const char* expression) {
 }
 
 extern Token lexer_next(Lexer* lexer, Status* status) {
-    while (lexer && !lexer_at_end(lexer)) {
-        if (lexer_is_space(lexer)) {
-            lexer_skip_spaces(lexer);
+    while (lexer && !at_end(lexer)) {
+        if (is_space(lexer)) {
+            skip_spaces(lexer);
             continue;
         }
-        return lexer_lang_token(lexer, status);
+        return lang_token(lexer, status);
     }
     return (Token) { TOKEN_END };
 }
 
-static Token lexer_lang_token(Lexer* lexer, Status* status) {
-    return lexer_is_digit(lexer)
-        ? lexer_number_token(lexer)
-        : lexer_base_token(lexer, status);
+static Token lang_token(Lexer* lexer, Status* status) {
+    return is_digit(lexer)
+        ? number_token(lexer)
+        : base_token(lexer, status);
 }
 
-static Token lexer_number_token(Lexer* lexer) {
+static Token number_token(Lexer* lexer) {
     double result = 0;
-    while (!lexer_at_end(lexer) && lexer_is_digit(lexer)) {
+    while (!at_end(lexer) && is_digit(lexer)) {
         result *= 10;
         result += lexer->current - '0';
-        lexer_advance(lexer);
+        advance(lexer);
     }
     return (Token) { TOKEN_NUMBER, result };
 }
 
-static Token lexer_base_token(Lexer* lexer, Status* status) {
+static Token base_token(Lexer* lexer, Status* status) {
     char current = lexer->current;
-    lexer_advance(lexer);
+    advance(lexer);
     switch (current) {
         case '+': return (Token) { TOKEN_PLUS };
         case '-': return (Token) { TOKEN_MINUS };
@@ -81,24 +92,8 @@ static Token lexer_base_token(Lexer* lexer, Status* status) {
     return (Token) { TOKEN_END };
 }
 
-static void lexer_skip_spaces(Lexer* lexer) {
-    while (!lexer_at_end(lexer) && lexer_is_space(lexer)) {
-        lexer_advance(lexer);
+static void skip_spaces(Lexer* lexer) {
+    while (!at_end(lexer) && is_space(lexer)) {
+        advance(lexer);
     }
-}
-
-static void lexer_advance(Lexer* lexer) {
-    lexer->current = lexer->expression.content[++lexer->position];
-}
-
-static bool lexer_at_end(const Lexer* lexer) {
-    return lexer->position >= lexer->expression.size;
-}
-
-static bool lexer_is_space(const Lexer* lexer) {
-    return lexer->current == ' ';
-}
-
-static bool lexer_is_digit(const Lexer* lexer) {
-    return lexer->current > 47 && lexer->current < 58;
 }

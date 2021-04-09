@@ -17,19 +17,28 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "core/bool.h"
+#include <stdbool.h>
+
 #include "parser.h"
 
-static double parser_parse_expr(Parser*, Status*);
-static double parser_parse_term(Parser*, Status*);
-static double parser_parse_factor(Parser*, Status*);
-static double parser_parse_paren(Parser*, Status*);
+static double parse_expr(Parser*, Status*);
+static double parse_term(Parser*, Status*);
+static double parse_factor(Parser*, Status*);
+static double parse_paren(Parser*, Status*);
 
-static void parser_consume(Parser*, TokenType, Status*);
-static void parser_advance(Parser*, Status*);
+static void consume(Parser*, TokenType, Status*);
 
-static bool parser_check(Parser*, TokenType);
-static bool parser_match(Parser*, TokenType, TokenType);
+static inline void advance(Parser* parser, Status* status) {
+    parser->token = lexer_next(&parser->lexer, status);
+}
+
+static inline bool check(Parser* parser, TokenType type) {
+    return parser->token.type == type;
+}
+
+static inline bool match(Parser* parser, TokenType type1, TokenType type2) {
+    return check(parser, type1) || check(parser, type2);
+}
 
 /* Grammar:
  * > expr: term (PLUS|MINUS term)*
@@ -45,72 +54,60 @@ extern void parser_init(Parser* parser, const char* expression) {
 
 extern double parser_parse(Parser* parser, Status* status) {
     if (parser && parser->status == STATUS_SUCCESS)
-        return parser_parse_expr(parser, status);
+        return parse_expr(parser, status);
     *status = parser->status;
     return 0;
 }
 
-static double parser_parse_expr(Parser* parser, Status* status) {
-    double result = parser_parse_term(parser, status);
-    while (parser_match(parser, TOKEN_PLUS, TOKEN_MINUS)) {
+static double parse_expr(Parser* parser, Status* status) {
+    double result = parse_term(parser, status);
+    while (match(parser, TOKEN_PLUS, TOKEN_MINUS)) {
         Token token = parser->token;
-        parser_advance(parser, status);
+        advance(parser, status);
         result = token.type == TOKEN_PLUS
-            ? result + parser_parse_term(parser, status)
-            : result - parser_parse_term(parser, status);
+            ? result + parse_term(parser, status)
+            : result - parse_term(parser, status);
     }
     return result;
 }
 
-static double parser_parse_term(Parser* parser, Status* status) {
-    double result = parser_parse_factor(parser, status);
-    while (parser_match(parser, TOKEN_STAR, TOKEN_SLASH)) {
+static double parse_term(Parser* parser, Status* status) {
+    double result = parse_factor(parser, status);
+    while (match(parser, TOKEN_STAR, TOKEN_SLASH)) {
         Token token = parser->token;
-        parser_advance(parser, status);
+        advance(parser, status);
         result = token.type == TOKEN_STAR
-            ? result * parser_parse_factor(parser, status)
-            : result / parser_parse_factor(parser, status);
+            ? result * parse_factor(parser, status)
+            : result / parse_factor(parser, status);
     }
     return result;
 }
 
-static double parser_parse_factor(Parser* parser, Status* status) {
+static double parse_factor(Parser* parser, Status* status) {
     Token token = parser->token;
     switch (token.type) {
         case TOKEN_NUMBER:
-            parser_advance(parser, status);
+            advance(parser, status);
             return token.value;
         case TOKEN_MINUS:
-            parser_advance(parser, status);
-            return -parser_parse_factor(parser, status);
+            advance(parser, status);
+            return -parse_factor(parser, status);
         default:
-            return parser_parse_paren(parser, status);
+            return parse_paren(parser, status);
     }
 }
 
-static double parser_parse_paren(Parser* parser, Status* status) {
-    parser_consume(parser, TOKEN_LPAREN, status);
-    double result = parser_parse_expr(parser, status);
-    parser_consume(parser, TOKEN_RPAREN, status);
+static double parse_paren(Parser* parser, Status* status) {
+    consume(parser, TOKEN_LPAREN, status);
+    double result = parse_expr(parser, status);
+    consume(parser, TOKEN_RPAREN, status);
     return result;
 }
 
-static void parser_consume(Parser* parser, TokenType type, Status* status) {
-    if (parser_check(parser, type)) {
-        parser_advance(parser, status);
+static void consume(Parser* parser, TokenType type, Status* status) {
+    if (check(parser, type)) {
+        advance(parser, status);
     } else {
         *status = STATUS_INVARG;
     }
-}
-
-static void parser_advance(Parser* parser, Status* status) {
-    parser->token = lexer_next(&parser->lexer, status);
-}
-
-static bool parser_match(Parser* parser, TokenType type1, TokenType type2) {
-    return parser_check(parser, type1) || parser_check(parser, type2);
-}
-
-static bool parser_check(Parser* parser, TokenType type) {
-    return parser->token.type == type;
 }

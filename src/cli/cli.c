@@ -19,34 +19,34 @@
 
 #include <malloc.h>
 #include <string.h>
+#include <stdbool.h>
 #include <conix.h>
 
 #include "core/app.h"
 #include "core/status.h"
-#include "core/bool.h"
 #include "app/calc.h"
 
 #include "cli.h"
 
-static void cli_repl(void*);
-static void cli_about(void*);
-static void cli_default(void*);
+static void repl_option(void*);
+static void about_option(void*);
+static void default_option(void*);
 
-static void cli_process_input(const char*);
+static void process_input(const char*);
 
 extern void cli_run(size_t argc, const char** argv) {
     CnxApp app = { APP_NAME, APP_VERSION };
     CnxCli* cli = cnx_cli_init(app);
     cnx_cli_add(cli, 3, (CnxOption[]) {
-        { "--default", "Run app in REPL mode", cli_repl, NULL },
-        { "-a, --about", "Display other app information", cli_about, NULL },
-        { "*", NULL, cli_default, NULL }
+        { "--default", "Run app in REPL mode", repl_option, NULL },
+        { "-a, --about", "Display other app information", about_option, NULL },
+        { "*", NULL, default_option, NULL }
     });
     cnx_cli_run(cli, argc, argv);
     cnx_cli_free(cli);
 }
 
-static void cli_repl(void* data) {
+static void repl_option(void* data) {
     size_t size = 255;
     char* buffer = (char*) malloc(size);
 
@@ -55,21 +55,21 @@ static void cli_repl(void* data) {
         getline((char**) &buffer, &size, stdin);
         buffer[strlen(buffer) - 1] = '\0';
         if (strstr(buffer, "exit") != NULL) break;
-        cli_process_input(buffer);
+        process_input(buffer);
     }
 
     free(buffer);
 }
 
-static void cli_about(void* data) {
+static void about_option(void* data) {
     printf("%s", APP_ABOUT);
 }
 
-static void cli_default(void* data) {
+static void default_option(void* data) {
     fprintf(stderr, "%s: Invalid option!\n", APP_NAME);
 }
 
-static void cli_process_input(const char* expression) {
+static void process_input(const char* expression) {
     Status status = STATUS_SUCCESS;
     double result = calc_calculate(expression, &status);
     if (status == STATUS_SUCCESS) {

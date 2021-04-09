@@ -21,12 +21,17 @@
 #define X_CALC_PARSER_H
 
 #include "core/status.h"
+#include "lexer.h"
 
 typedef struct t_Parser Parser;
 
-extern Parser* parser_create(const char* expression);
-extern void parser_destroy(Parser* self);
+struct t_Parser {
+    Lexer lexer;
+    Status status;
+    Token token;
+};
 
-extern double parser_parse(Parser* self, Status* status);
+extern void parser_init(Parser* parser, const char* expression);
+extern double parser_parse(Parser* parser, Status* status);
 
 #endif // X_CALC_PARSER_H

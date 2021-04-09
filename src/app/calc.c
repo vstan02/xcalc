@@ -1,4 +1,4 @@
-/* App - Math expression calculator
+/* Calc - Math expression calculator
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -21,8 +21,7 @@
 #include "parser.h"
 
 extern double calc_calculate(const char* expression, Status* status) {
-    Parser* parser = parser_create(expression);
-    double result = parser_parse(parser, status);
-    parser_destroy(parser);
-    return result;
+    Parser parser;
+    parser_init(&parser, expression);
+    return parser_parse(&parser, status);
 }

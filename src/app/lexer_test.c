@@ -25,25 +25,25 @@
 static void test_lexer_get_next(void);
 
 extern void add_lexer_tests(void) {
-    g_test_add_func(TEST_LEXER_PATH "/get_next", test_lexer_get_next);
+    g_test_add_func(TEST_LEXER_PATH "/next", test_lexer_get_next);
 }
 
 static void verify_next_token_type(Lexer* lexer, TokenType type) {
     Status status = STATUS_SUCCESS;
-    Token token = lexer_get_next(lexer, &status);
+    Token token = lexer_next(lexer, &status);
     g_assert_cmpint(status, ==, STATUS_SUCCESS);
     g_assert_cmpint(token.type, ==, type);
 }
 
 static void test_lexer_get_next(void) {
-    Lexer* lexer = lexer_create("3 * (+2)");
-    verify_next_token_type(lexer, TOKEN_NUMBER);
-    verify_next_token_type(lexer, TOKEN_STAR);
-    verify_next_token_type(lexer, TOKEN_LPAREN);
-    verify_next_token_type(lexer, TOKEN_PLUS);
-    verify_next_token_type(lexer, TOKEN_NUMBER);
-    verify_next_token_type(lexer, TOKEN_RPAREN);
-    verify_next_token_type(lexer, TOKEN_END);
-    verify_next_token_type(lexer, TOKEN_END);
-    lexer_destroy(lexer);
+    Lexer lexer;
+    lexer_init(&lexer, "3 * (+2)");
+    verify_next_token_type(&lexer, TOKEN_NUMBER);
+    verify_next_token_type(&lexer, TOKEN_STAR);
+    verify_next_token_type(&lexer, TOKEN_LPAREN);
+    verify_next_token_type(&lexer, TOKEN_PLUS);
+    verify_next_token_type(&lexer, TOKEN_NUMBER);
+    verify_next_token_type(&lexer, TOKEN_RPAREN);
+    verify_next_token_type(&lexer, TOKEN_END);
+    verify_next_token_type(&lexer, TOKEN_END);
 }

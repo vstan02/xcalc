@@ -20,15 +20,26 @@
 #ifndef X_CALC_LEXER_H
 #define X_CALC_LEXER_H
 
-#include "core/status.h"
+#include <stddef.h>
 
+#include "core/status.h"
 #include "token.h"
 
 typedef struct t_Lexer Lexer;
+typedef struct t_String String;
 
-extern Lexer* lexer_create(const char* expression);
-extern void lexer_destroy(Lexer* self);
+struct t_String {
+    size_t size;
+    const char* content;
+};
 
-extern Token lexer_get_next(Lexer* self, Status* status);
+struct t_Lexer {
+    char current;
+    String expression;
+    size_t position;
+};
+
+extern void lexer_init(Lexer* lexer, const char* expression);
+extern Token lexer_next(Lexer* lexer, Status* status);
 
 #endif // X_CALC_LEXER_H

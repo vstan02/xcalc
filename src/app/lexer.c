@@ -17,28 +17,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <malloc.h>
 #include <string.h>
 
 #include "core/bool.h"
 #include "lexer.h"
 
-typedef struct t_String String;
-
-struct t_String {
-    size_t size;
-    const char* content;
-};
-
-struct t_Lexer {
-    char current;
-    String expression;
-    size_t position;
-};
-
-static Token lexer_get_lang_token(Lexer*, Status*);
-static Token lexer_get_number_token(Lexer*);
-static Token lexer_get_base_token(Lexer*, Status*);
+static Token lexer_lang_token(Lexer*, Status*);
+static Token lexer_number_token(Lexer*);
+static Token lexer_base_token(Lexer*, Status*);
 
 static void lexer_skip_spaces(Lexer*);
 static void lexer_advance(Lexer*);
@@ -47,48 +33,42 @@ static bool lexer_at_end(const Lexer*);
 static bool lexer_is_space(const Lexer*);
 static bool lexer_is_digit(const Lexer*);
 
-extern Lexer* lexer_create(const char* expression) {
-    Lexer* self = (Lexer*) malloc(sizeof(Lexer));
-    self->current = expression[0];
-    self->expression = (String) { strlen(expression), expression };
-    self->position = 0;
-    return self;
+extern void lexer_init(Lexer* lexer, const char* expression) {
+    lexer->current = expression[0];
+    lexer->expression = (String) { strlen(expression), expression };
+    lexer->position = 0;
 }
 
-extern void lexer_destroy(Lexer* self) {
-    if (self) free(self);
-}
-
-extern Token lexer_get_next(Lexer* self, Status* status) {
-    while (self && !lexer_at_end(self)) {
-        if (lexer_is_space(self)) {
-            lexer_skip_spaces(self);
+extern Token lexer_next(Lexer* lexer, Status* status) {
+    while (lexer && !lexer_at_end(lexer)) {
+        if (lexer_is_space(lexer)) {
+            lexer_skip_spaces(lexer);
             continue;
         }
-        return lexer_get_lang_token(self, status);
+        return lexer_lang_token(lexer, status);
     }
     return (Token) { TOKEN_END };
 }
 
-static Token lexer_get_lang_token(Lexer* self, Status* status) {
-    return lexer_is_digit(self)
-        ? lexer_get_number_token(self)
-        : lexer_get_base_token(self, status);
+static Token lexer_lang_token(Lexer* lexer, Status* status) {
+    return lexer_is_digit(lexer)
+        ? lexer_number_token(lexer)
+        : lexer_base_token(lexer, status);
 }
 
-static Token lexer_get_number_token(Lexer* self) {
+static Token lexer_number_token(Lexer* lexer) {
     double result = 0;
-    while (!lexer_at_end(self) && lexer_is_digit(self)) {
+    while (!lexer_at_end(lexer) && lexer_is_digit(lexer)) {
         result *= 10;
-        result += self->current - '0';
-        lexer_advance(self);
+        result += lexer->current - '0';
+        lexer_advance(lexer);
     }
     return (Token) { TOKEN_NUMBER, result };
 }
 
-static Token lexer_get_base_token(Lexer* self, Status* status) {
-    char current = self->current;
-    lexer_advance(self);
+static Token lexer_base_token(Lexer* lexer, Status* status) {
+    char current = lexer->current;
+    lexer_advance(lexer);
     switch (current) {
         case '+': return (Token) { TOKEN_PLUS };
         case '-': return (Token) { TOKEN_MINUS };
@@ -101,24 +81,24 @@ static Token lexer_get_base_token(Lexer* self, Status* status) {
     return (Token) { TOKEN_END };
 }
 
-static void lexer_skip_spaces(Lexer* self) {
-    while (!lexer_at_end(self) && lexer_is_space(self)) {
-        lexer_advance(self);
+static void lexer_skip_spaces(Lexer* lexer) {
+    while (!lexer_at_end(lexer) && lexer_is_space(lexer)) {
+        lexer_advance(lexer);
     }
 }
 
-static void lexer_advance(Lexer* self) {
-    self->current = self->expression.content[++self->position];
+static void lexer_advance(Lexer* lexer) {
+    lexer->current = lexer->expression.content[++lexer->position];
 }
 
-static bool lexer_at_end(const Lexer* self) {
-    return self->position >= self->expression.size;
+static bool lexer_at_end(const Lexer* lexer) {
+    return lexer->position >= lexer->expression.size;
 }
 
-static bool lexer_is_space(const Lexer* self) {
-    return self->current == ' ';
+static bool lexer_is_space(const Lexer* lexer) {
+    return lexer->current == ' ';
 }
 
-static bool lexer_is_digit(const Lexer* self) {
-    return self->current > 47 && self->current < 58;
+static bool lexer_is_digit(const Lexer* lexer) {
+    return lexer->current > 47 && lexer->current < 58;
 }

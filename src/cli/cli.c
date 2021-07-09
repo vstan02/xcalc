@@ -70,7 +70,7 @@ static void default_option(void* data) {
 }
 
 static void process_input(const char* expression) {
-    Status status = STATUS_SUCCESS;
+    status_t status = STATUS_SUCCESS;
     double result = calc_calculate(expression, &status);
     if (status == STATUS_SUCCESS) {
         printf("= %g\n", result);

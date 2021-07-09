@@ -28,15 +28,15 @@ extern void add_lexer_tests(void) {
     g_test_add_func(TEST_LEXER_PATH "/next", test_lexer_get_next);
 }
 
-static void verify_next_token_type(Lexer* lexer, TokenType type) {
-    Status status = STATUS_SUCCESS;
-    Token token = lexer_next(lexer, &status);
+static void verify_next_token_type(lexer_t* lexer, token_type_t type) {
+    status_t status = STATUS_SUCCESS;
+    token_t token = lexer_next(lexer, &status);
     g_assert_cmpint(status, ==, STATUS_SUCCESS);
     g_assert_cmpint(token.type, ==, type);
 }
 
 static void test_lexer_get_next(void) {
-    Lexer lexer;
+    lexer_t lexer;
     lexer_init(&lexer, "3 * (+2)");
     verify_next_token_type(&lexer, TOKEN_NUMBER);
     verify_next_token_type(&lexer, TOKEN_STAR);

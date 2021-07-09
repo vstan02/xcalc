@@ -19,9 +19,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "status.h"
 
-void status_print(Status status) {
+extern void status_print(status_t status) {
     switch (status) {
         case STATUS_SUCCESS:
             fprintf(stderr, "Success");
@@ -32,7 +33,7 @@ void status_print(Status status) {
     }
 }
 
-void status_throw(Status status) {
+extern void status_throw(status_t status) {
     status_print(status);
     exit(EXIT_FAILURE);
 }

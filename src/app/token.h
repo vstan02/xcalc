@@ -20,10 +20,10 @@
 #ifndef X_CALC_TOKEN_H
 #define X_CALC_TOKEN_H
 
-typedef struct t_Token Token;
-typedef enum t_TokenType TokenType;
+typedef struct token token_t;
+typedef enum token_type token_type_t;
 
-enum t_TokenType {
+enum token_type {
     TOKEN_NUMBER,
     TOKEN_PLUS,
     TOKEN_MINUS,
@@ -34,8 +34,8 @@ enum t_TokenType {
     TOKEN_END
 };
 
-struct t_Token {
-    TokenType type;
+struct token {
+    token_type_t type;
     double value;
 };
 

@@ -29,9 +29,9 @@ extern void add_parser_tests(void) {
 }
 
 static void verify_expression_processing(const char* expression, double expected) {
-    Parser parser;
+    parser_t parser;
     parser_init(&parser, expression);
-    Status status = STATUS_SUCCESS;
+    status_t status = STATUS_SUCCESS;
     double result = parser_parse(&parser, &status);
     g_assert_cmpint(status, ==, STATUS_SUCCESS);
     g_assert_cmpfloat(result, ==, expected);

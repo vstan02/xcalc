@@ -21,22 +21,22 @@
 
 #include "parser.h"
 
-static double parse_expr(Parser*, Status*);
-static double parse_term(Parser*, Status*);
-static double parse_factor(Parser*, Status*);
-static double parse_paren(Parser*, Status*);
+static double parse_expr(parser_t*, status_t*);
+static double parse_term(parser_t*, status_t*);
+static double parse_factor(parser_t*, status_t*);
+static double parse_paren(parser_t*, status_t*);
 
-static void consume(Parser*, TokenType, Status*);
+static void consume(parser_t*, token_type_t, status_t*);
 
-static inline void advance(Parser* parser, Status* status) {
+static inline void advance(parser_t* parser, status_t* status) {
     parser->token = lexer_next(&parser->lexer, status);
 }
 
-static inline bool check(Parser* parser, TokenType type) {
+static inline bool check(parser_t* parser, token_type_t type) {
     return parser->token.type == type;
 }
 
-static inline bool match(Parser* parser, TokenType type1, TokenType type2) {
+static inline bool match(parser_t* parser, token_type_t type1, token_type_t type2) {
     return check(parser, type1) || check(parser, type2);
 }
 
@@ -46,23 +46,23 @@ static inline bool match(Parser* parser, TokenType type1, TokenType type2) {
  * > factor: NUMBER | -factor | paren
  * > paren: LPAREN expr RPAREN
  */
-extern void parser_init(Parser* parser, const char* expression) {
+extern void parser_init(parser_t* parser, const char* expression) {
     parser->status = STATUS_SUCCESS;
     lexer_init(&parser->lexer, expression);
     parser->token = lexer_next(&parser->lexer, &parser->status);
 }
 
-extern double parser_parse(Parser* parser, Status* status) {
+extern double parser_parse(parser_t* parser, status_t* status) {
     if (parser && parser->status == STATUS_SUCCESS)
         return parse_expr(parser, status);
     *status = parser->status;
     return 0;
 }
 
-static double parse_expr(Parser* parser, Status* status) {
+static double parse_expr(parser_t* parser, status_t* status) {
     double result = parse_term(parser, status);
     while (match(parser, TOKEN_PLUS, TOKEN_MINUS)) {
-        Token token = parser->token;
+        token_t token = parser->token;
         advance(parser, status);
         result = token.type == TOKEN_PLUS
             ? result + parse_term(parser, status)
@@ -71,10 +71,10 @@ static double parse_expr(Parser* parser, Status* status) {
     return result;
 }
 
-static double parse_term(Parser* parser, Status* status) {
+static double parse_term(parser_t* parser, status_t* status) {
     double result = parse_factor(parser, status);
     while (match(parser, TOKEN_STAR, TOKEN_SLASH)) {
-        Token token = parser->token;
+        token_t token = parser->token;
         advance(parser, status);
         result = token.type == TOKEN_STAR
             ? result * parse_factor(parser, status)
@@ -83,8 +83,8 @@ static double parse_term(Parser* parser, Status* status) {
     return result;
 }
 
-static double parse_factor(Parser* parser, Status* status) {
-    Token token = parser->token;
+static double parse_factor(parser_t* parser, status_t* status) {
+    token_t token = parser->token;
     switch (token.type) {
         case TOKEN_NUMBER:
             advance(parser, status);
@@ -97,14 +97,14 @@ static double parse_factor(Parser* parser, Status* status) {
     }
 }
 
-static double parse_paren(Parser* parser, Status* status) {
+static double parse_paren(parser_t* parser, status_t* status) {
     consume(parser, TOKEN_LPAREN, status);
     double result = parse_expr(parser, status);
     consume(parser, TOKEN_RPAREN, status);
     return result;
 }
 
-static void consume(Parser* parser, TokenType type, Status* status) {
+static void consume(parser_t* parser, token_type_t type, status_t* status) {
     if (check(parser, type)) {
         advance(parser, status);
     } else {

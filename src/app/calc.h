@@ -22,6 +22,6 @@
 
 #include "core/status.h"
 
-extern double calc_calculate(const char* expression, Status* status);
+extern double calc_calculate(const char* expression, status_t* status);
 
 #endif // XCALC_CALC_H

@@ -20,14 +20,14 @@
 #ifndef XCALC_STATUS_H
 #define XCALC_STATUS_H
 
-typedef enum t_Status Status;
+typedef enum status status_t;
 
-enum t_Status {
+enum status {
     STATUS_SUCCESS = 0,
     STATUS_INVARG = 22
 };
 
-void status_print(Status status);
-void status_throw(Status status);
+extern void status_print(status_t status);
+extern void status_throw(status_t status);
 
 #endif // XCALC_STATUS_H

@@ -25,21 +25,21 @@
 #include "core/status.h"
 #include "token.h"
 
-typedef struct t_Lexer Lexer;
-typedef struct t_String String;
+typedef struct lexer lexer_t;
+typedef struct string string_t;
 
-struct t_String {
+struct string {
     size_t size;
     const char* content;
 };
 
-struct t_Lexer {
+struct lexer {
     char current;
-    String expression;
+    string_t expression;
     size_t position;
 };
 
-extern void lexer_init(Lexer* lexer, const char* expression);
-extern Token lexer_next(Lexer* lexer, Status* status);
+extern void lexer_init(lexer_t* lexer, const char* expression);
+extern token_t lexer_next(lexer_t* lexer, status_t* status);
 
 #endif // X_CALC_LEXER_H

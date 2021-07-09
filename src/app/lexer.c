@@ -22,35 +22,35 @@
 
 #include "lexer.h"
 
-static Token lang_token(Lexer*, Status*);
-static Token number_token(Lexer*);
-static Token base_token(Lexer*, Status*);
+static token_t lang_token(lexer_t*, status_t*);
+static token_t number_token(lexer_t*);
+static token_t base_token(lexer_t*, status_t*);
 
-static void skip_spaces(Lexer*);
+static void skip_spaces(lexer_t*);
 
-static inline void advance(Lexer* lexer) {
+static inline void advance(lexer_t* lexer) {
     lexer->current = lexer->expression.content[++lexer->position];
 }
 
-static inline bool at_end(const Lexer* lexer) {
+static inline bool at_end(const lexer_t* lexer) {
     return lexer->position >= lexer->expression.size;
 }
 
-static inline bool is_space(const Lexer* lexer) {
+static inline bool is_space(const lexer_t* lexer) {
     return lexer->current == ' ';
 }
 
-static inline bool is_digit(const Lexer* lexer) {
+static inline bool is_digit(const lexer_t* lexer) {
     return lexer->current > 47 && lexer->current < 58;
 }
 
-extern void lexer_init(Lexer* lexer, const char* expression) {
+extern void lexer_init(lexer_t* lexer, const char* expression) {
     lexer->current = expression[0];
-    lexer->expression = (String) { strlen(expression), expression };
+    lexer->expression = (string_t) { strlen(expression), expression };
     lexer->position = 0;
 }
 
-extern Token lexer_next(Lexer* lexer, Status* status) {
+extern token_t lexer_next(lexer_t* lexer, status_t* status) {
     while (lexer && !at_end(lexer)) {
         if (is_space(lexer)) {
             skip_spaces(lexer);
@@ -58,41 +58,41 @@ extern Token lexer_next(Lexer* lexer, Status* status) {
         }
         return lang_token(lexer, status);
     }
-    return (Token) { TOKEN_END };
+    return (token_t) { TOKEN_END };
 }
 
-static Token lang_token(Lexer* lexer, Status* status) {
+static token_t lang_token(lexer_t* lexer, status_t* status) {
     return is_digit(lexer)
         ? number_token(lexer)
         : base_token(lexer, status);
 }
 
-static Token number_token(Lexer* lexer) {
+static token_t number_token(lexer_t* lexer) {
     double result = 0;
     while (!at_end(lexer) && is_digit(lexer)) {
         result *= 10;
         result += lexer->current - '0';
         advance(lexer);
     }
-    return (Token) { TOKEN_NUMBER, result };
+    return (token_t) { TOKEN_NUMBER, result };
 }
 
-static Token base_token(Lexer* lexer, Status* status) {
+static token_t base_token(lexer_t* lexer, status_t* status) {
     char current = lexer->current;
     advance(lexer);
     switch (current) {
-        case '+': return (Token) { TOKEN_PLUS };
-        case '-': return (Token) { TOKEN_MINUS };
-        case '*': return (Token) { TOKEN_STAR };
-        case '/': return (Token) { TOKEN_SLASH };
-        case '(': return (Token) { TOKEN_LPAREN };
-        case ')': return (Token) { TOKEN_RPAREN };
+        case '+': return (token_t) { TOKEN_PLUS };
+        case '-': return (token_t) { TOKEN_MINUS };
+        case '*': return (token_t) { TOKEN_STAR };
+        case '/': return (token_t) { TOKEN_SLASH };
+        case '(': return (token_t) { TOKEN_LPAREN };
+        case ')': return (token_t) { TOKEN_RPAREN };
         default: *status = STATUS_INVARG;
     }
-    return (Token) { TOKEN_END };
+    return (token_t) { TOKEN_END };
 }
 
-static void skip_spaces(Lexer* lexer) {
+static void skip_spaces(lexer_t* lexer) {
     while (!at_end(lexer) && is_space(lexer)) {
         advance(lexer);
     }

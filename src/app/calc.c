@@ -20,8 +20,8 @@
 #include "calc.h"
 #include "parser.h"
 
-extern double calc_calculate(const char* expression, Status* status) {
-    Parser parser;
+extern double calc_calculate(const char* expression, status_t* status) {
+    parser_t parser;
     parser_init(&parser, expression);
     return parser_parse(&parser, status);
 }

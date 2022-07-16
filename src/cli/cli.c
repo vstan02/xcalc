@@ -17,9 +17,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
 #include <malloc.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include <conix.h>
 
 #include "core/app.h"
@@ -28,16 +30,18 @@
 
 #include "cli.h"
 
-static void repl_option(void*);
-static void about_option(void*);
-static void default_option(void*);
+static void repl_option(cnx_ctx_t*, void*);
+static void about_option(cnx_ctx_t*, void*);
+static void default_option(cnx_ctx_t*, void*);
 
 static void process_input(const char*);
 
+static bool only_spaces(const char*);
+
 extern void cli_run(size_t argc, const char** argv) {
-    CnxApp app = { APP_NAME, APP_VERSION };
-    CnxCli* cli = cnx_cli_init(app);
-    cnx_cli_add(cli, 3, (CnxOption[]) {
+    cnx_app_t app = { APP_NAME, APP_VERSION };
+    cnx_cli_t* cli = cnx_cli_init(app);
+    cnx_cli_add(cli, 3, (cnx_option_t[]) {
         { "--default", "Run app in REPL mode", repl_option, NULL },
         { "-a, --about", "Display other app information", about_option, NULL },
         { "*", NULL, default_option, NULL }
@@ -46,7 +50,7 @@ extern void cli_run(size_t argc, const char** argv) {
     cnx_cli_free(cli);
 }
 
-static void repl_option(void* data) {
+static void repl_option(cnx_ctx_t* ctx, void* data) {
     size_t size = 255;
     char* buffer = (char*) malloc(size);
 
@@ -54,6 +58,7 @@ static void repl_option(void* data) {
         printf("> ");
         getline((char**) &buffer, &size, stdin);
         buffer[strlen(buffer) - 1] = '\0';
+        if (only_spaces(buffer)) continue;
         if (strstr(buffer, "exit") != NULL) break;
         process_input(buffer);
     }
@@ -61,12 +66,12 @@ static void repl_option(void* data) {
     free(buffer);
 }
 
-static void about_option(void* data) {
+static void about_option(cnx_ctx_t* ctx, void* data) {
     printf("%s", APP_ABOUT);
 }
 
-static void default_option(void* data) {
-    fprintf(stderr, "%s: Invalid option!\n", APP_NAME);
+static void default_option(cnx_ctx_t* ctx, void* data) {
+    printf("%s: Invalid option!\n", APP_NAME);
 }
 
 static void process_input(const char* expression) {
@@ -75,6 +80,11 @@ static void process_input(const char* expression) {
     if (status == STATUS_SUCCESS) {
         printf("= %g\n", result);
     } else {
-        fprintf(stderr, "Invalid expression!\n");
+        printf("Invalid expression!\n");
     }
+}
+
+static bool only_spaces(const char* str) {
+    while (*str && isspace(*str)) ++str;
+    return *str == '\0';
 }

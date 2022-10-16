@@ -34,7 +34,7 @@ static void repl_option(cnx_ctx_t*, void*);
 static void about_option(cnx_ctx_t*, void*);
 static void default_option(cnx_ctx_t*, void*);
 
-static void process_input(const char*);
+static void process_input(calc_t*, const char*);
 
 static bool only_spaces(const char*);
 
@@ -51,6 +51,9 @@ extern void cli_run(size_t argc, const char** argv) {
 }
 
 static void repl_option(cnx_ctx_t* ctx, void* data) {
+    calc_t calc;
+    calc_init(&calc);
+
     size_t size = 255;
     char* buffer = (char*) malloc(size);
 
@@ -60,10 +63,11 @@ static void repl_option(cnx_ctx_t* ctx, void* data) {
         buffer[strlen(buffer) - 1] = '\0';
         if (only_spaces(buffer)) continue;
         if (strstr(buffer, "exit") != NULL) break;
-        process_input(buffer);
+        process_input(&calc, buffer);
     }
 
     free(buffer);
+    calc_free(&calc);
 }
 
 static void about_option(cnx_ctx_t* ctx, void* data) {
@@ -74,9 +78,9 @@ static void default_option(cnx_ctx_t* ctx, void* data) {
     printf("%s: Invalid option!\n", APP_NAME);
 }
 
-static void process_input(const char* expression) {
+static void process_input(calc_t* calc, const char* expression) {
     status_t status = STATUS_SUCCESS;
-    double result = calc_calculate(expression, &status);
+    double result = calc_calculate(calc, expression, &status);
     if (status == STATUS_SUCCESS) {
         printf("= %g\n", result);
     } else {

@@ -1,4 +1,4 @@
-/* Calc - Math expression calculator
+/* Vars - A collection of variables
  * Copyright (C) 2020 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.
@@ -17,21 +17,24 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <math.h>
+#ifndef XCALC_VARS_H
+#define XCALC_VARS_H
 
-#include "calc.h"
+#include "core/status.h"
 
-extern void calc_init(calc_t* calc) {
-    vars_init(&calc->vars);
-    vars_set(&calc->vars, "pi", M_PI);
-    vars_set(&calc->vars, "e", M_E);
-}
+#define STORES_SIZE 20
 
-extern void calc_free(calc_t* calc) {
-    vars_free(&calc->vars);
-}
+typedef struct vars vars_t;
+typedef struct vars_store vars_store_t;
 
-extern double calc_calculate(calc_t *calc, const char* expression, status_t* status) {
-    parser_init(&calc->parser, &calc->vars, expression);
-    return parser_parse(&calc->parser, status);
-}
+struct vars {
+    vars_store_t* stores[20];
+};
+
+extern void vars_init(vars_t* vars);
+extern void vars_free(vars_t* vars);
+
+extern double* vars_get(vars_t* vars, const char* name);
+extern void vars_set(vars_t* vars, const char* name, double value);
+
+#endif // XCALC_VARS_H

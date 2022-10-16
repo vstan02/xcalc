@@ -22,6 +22,12 @@
 
 typedef struct token token_t;
 typedef enum token_type token_type_t;
+typedef struct string string_t;
+
+struct string {
+    size_t size;
+    const char* content;
+};
 
 enum token_type {
     TOKEN_NUMBER,
@@ -31,12 +37,15 @@ enum token_type {
     TOKEN_SLASH,
     TOKEN_LPAREN,
     TOKEN_RPAREN,
+    TOKEN_DOLLAR,
+    TOKEN_EQUAL,
+    TOKEN_ID,
     TOKEN_END
 };
 
 struct token {
     token_type_t type;
-    double value;
+    string_t value;
 };
 
 #endif // X_CALC_TOKEN_H

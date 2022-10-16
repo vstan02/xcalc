@@ -26,12 +26,6 @@
 #include "token.h"
 
 typedef struct lexer lexer_t;
-typedef struct string string_t;
-
-struct string {
-    size_t size;
-    const char* content;
-};
 
 struct lexer {
     char current;

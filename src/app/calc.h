@@ -21,7 +21,19 @@
 #define XCALC_CALC_H
 
 #include "core/status.h"
+#include "parser.h"
+#include "vars.h"
 
-extern double calc_calculate(const char* expression, status_t* status);
+typedef struct calc calc_t;
+
+struct calc {
+    vars_t vars;
+    parser_t parser;
+};
+
+extern void calc_init(calc_t* calc);
+extern void calc_free(calc_t* calc);
+
+extern double calc_calculate(calc_t* calc, const char* expression, status_t* status);
 
 #endif // XCALC_CALC_H

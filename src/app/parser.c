@@ -18,9 +18,13 @@
  */
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "parser.h"
 
+static double parse_decl(parser_t*, status_t*);
+static double parse_call(parser_t*, status_t*);
 static double parse_expr(parser_t*, status_t*);
 static double parse_term(parser_t*, status_t*);
 static double parse_factor(parser_t*, status_t*);
@@ -41,22 +45,28 @@ static inline bool match(parser_t* parser, token_type_t type1, token_type_t type
 }
 
 /* Grammar:
+ * > var_decl: DOLLAR ID EQUAL expr
  * > expr: term (PLUS|MINUS term)*
  * > term: factor (STAR|SLASH factor)*
- * > factor: NUMBER | -factor | paren
+ * > factor: NUMBER | ID | -factor | paren
  * > paren: LPAREN expr RPAREN
  */
-extern void parser_init(parser_t* parser, const char* expression) {
+extern void parser_init(parser_t* parser, vars_t* vars, const char* expression) {
     parser->status = STATUS_SUCCESS;
+    parser->vars = vars;
     lexer_init(&parser->lexer, expression);
     parser->token = lexer_next(&parser->lexer, &parser->status);
 }
 
 extern double parser_parse(parser_t* parser, status_t* status) {
-    if (parser && parser->status == STATUS_SUCCESS)
-        return parse_expr(parser, status);
-    *status = parser->status;
-    return 0;
+    if (!parser || !parser->status == STATUS_SUCCESS) {
+        *status = parser->status;
+        return 0;
+    }
+
+    return parser->token.type == TOKEN_DOLLAR
+        ? parse_decl(parser, status)
+        : parse_expr(parser, status);
 }
 
 static double parse_expr(parser_t* parser, status_t* status) {
@@ -88,12 +98,20 @@ static double parse_factor(parser_t* parser, status_t* status) {
     switch (token.type) {
         case TOKEN_NUMBER:
             advance(parser, status);
-            return token.value;
+            return strtod(token.value.content, NULL);
         case TOKEN_MINUS:
             advance(parser, status);
             return -parse_factor(parser, status);
-        default:
+        case TOKEN_PLUS:
+            advance(parser, status);
+            return parse_factor(parser, status);
+        case TOKEN_ID:
+            return parse_call(parser, status);
+        case TOKEN_LPAREN:
             return parse_paren(parser, status);
+        default:
+            *status = STATUS_INVARG;
+            return 0;
     }
 }
 
@@ -102,6 +120,36 @@ static double parse_paren(parser_t* parser, status_t* status) {
     double result = parse_expr(parser, status);
     consume(parser, TOKEN_RPAREN, status);
     return result;
+}
+
+static double parse_decl(parser_t* parser, status_t* status) {
+    consume(parser, TOKEN_DOLLAR, status);
+    string_t id = parser->token.value;
+    consume(parser, TOKEN_ID, status);
+    consume(parser, TOKEN_EQUAL, status);
+    char* name = strndup(id.content, id.size);
+    double value = parse_expr(parser, status);
+
+    vars_set(parser->vars, name, value);
+
+    free(name);
+    return value;
+}
+
+static double parse_call(parser_t* parser, status_t* status) {
+    string_t id = parser->token.value;
+    consume(parser, TOKEN_ID, status);
+
+    char* name = strndup(id.content, id.size);
+    double* value = vars_get(parser->vars, name);
+    free(name);
+
+    if (value != NULL) {
+        return *value;
+    }
+
+    *status = STATUS_INVARG;
+    return 0;
 }
 
 static void consume(parser_t* parser, token_type_t type, status_t* status) {

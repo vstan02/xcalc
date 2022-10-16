@@ -1,4 +1,4 @@
-/* Cli - Command line interface
+/* Cli - xCalc command line interface
  * Copyright (C) 2020-2021 Stan Vlad <vstan02@protonmail.com>
  *
  * This file is part of xCalc.

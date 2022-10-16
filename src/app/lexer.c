@@ -86,6 +86,12 @@ static token_t number_token(lexer_t* lexer) {
     while (!at_end(lexer) && is_digit(lexer)) {
         advance(lexer);
     }
+    if (lexer->current == '.') {
+        advance(lexer);
+        while (!at_end(lexer) && is_digit(lexer)) {
+            advance(lexer);
+        }
+    }
     return (token_t) {
         .type = TOKEN_NUMBER,
         .value = {

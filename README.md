@@ -1,6 +1,7 @@
 # xCalc
 > A fast and simple to use calculator
 
+[![Version: v0.1.0](https://img.shields.io/badge/version-v0.1.0-blue)](https://vstan02.github.io/xcalc)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0)
 
 ## Contents
@@ -16,6 +17,10 @@
 - glib (for testing)
 
 These packages can usually be installed through your distributions package manager.
+
+Some libraries:
+- [Conix v1.0.0](https://github.com/vstan02/conix)
+- [Arithmo v1.0.0](https://github.com/vstan02/arithmo)
 
 ### Building the project
 To build the project, we first need to create a separate build directory:

@@ -27,7 +27,7 @@
 #include <arithmo.h>
 
 #define APP_NAME "xcalc"
-#define APP_VERSION "1.0.1"
+#define APP_VERSION "0.2.1"
 
 #define APP_ABOUT \
   "xCalc - A fast and simple to use calculator\n" \

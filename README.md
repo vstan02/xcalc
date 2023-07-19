@@ -1,7 +1,7 @@
 # xCalc
 > A fast and simple to use calculator
 
-[![Version: v0.1.0](https://img.shields.io/badge/version-v0.1.0-blue)](https://vstan02.github.io/xcalc)
+[![Version: v0.2.1](https://img.shields.io/badge/version-v0.2.1-blue)](https://vstan02.github.io/xcalc)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0)
 
 ## Contents
@@ -14,7 +14,6 @@
 ### Dependencies
 - C compiler
 - cmake (>= 3.17)
-- glib (for testing)
 
 These packages can usually be installed through your distributions package manager.
 

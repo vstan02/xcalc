@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.17)
 project(
   xcalc
-  VERSION 0.1.0
+  VERSION 0.2.1
   DESCRIPTION "A fast and simple to use calculator"
   LANGUAGES C
 )
